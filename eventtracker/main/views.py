@@ -5,6 +5,6 @@ import analyzer
 import mk_analyzer
 
 def main( request ):
-    content = analyzer.analyze()
+    content = mk_analyzer.analyze()
 
     return HttpResponse(content)

@@ -20,21 +20,22 @@ def analyze():
     #soup = bs.BeautifulSoup(html.read())
     soup = bs.BeautifulSoup(html.read())
     styles = []
+    classes = []
 
     for link in soup.findAll('a'):
         try:
-            print "http://multikino.pl/pl/filmy/"+link.get('href')
-            gzip_buf = opener.open("http://multikino.pl/pl/filmy/"+link.get('href'))
+            print "http://multikino.pl/"+link.get('href')
+            gzip_buf = opener.open("http://multikino.pl/"+link.get('href'))
         except:     #fixme - nie czekać na timeout - zrobic lepiej
             continue
         html = StringIO( gzip_buf.read())
         soup2 = bs.BeautifulSoup(html.read())
         for link2 in soup2.findAll('a'):
             try:
-                print ( "http://multikino.pl/pl/filmy/"+link2.get('href') )
-                gzip_buf = opener.open("http://multikino.pl/pl/filmy/"+link2.get('href'))
+                print ( "http://multikino.pl/"+link2.get('href') )
+                gzip_buf = opener.open("http://multikino.pl/"+link2.get('href'))
             except:     #fixme - nie czekać na timeout - zrobic lepiej
-                print "except -> ", ( "http://multikino.pl/pl/filmy/"+link2.get('href') )
+                print "except -> ", ( "http://multikino.pl/"+link2.get('href') )
                 continue
 
             html = StringIO( gzip_buf.read())
@@ -47,11 +48,14 @@ def analyze():
                         for el in foundElements:
                             print 'AAAAA'
                             tmpEl = el.findParent() # nalezy zaczac od rodzica, bo napis nie ma stylu
-                            while not tmpEl.get('style'):
+                            while not tmpEl.get('style') and not tmpEl.get('class'):
                                 print "1", tmpEl
                                 print '2', tmpEl.get('style')
                                 tmpEl = tmpEl.findParent()
                             print tmpEl
+                            if tmpEl.get('class') not in classes:
+                                classes.append( tmpEl.get('class') )
+
                             if tmpEl.get('style') not in styles:
                                 styles.append( tmpEl.get('style') )
                             '''
@@ -60,6 +64,15 @@ def analyze():
                                 if style not in styles:
                                     styles.append( style )
                             '''
+                    for cls in classes:
+                        print cls
+                        newElements = soup3.findAll({'class': cls})
+                        print 'TADAAAM klass'
+                        print newElements
+                        for newEl in newElements:
+                            print newEl
+
+
 
                     for style in styles:
                         print style
@@ -68,7 +81,7 @@ def analyze():
                         print 'TADAAAM'
                         print newElements
                         for newEl in newElements:
-                            print newEl.findParent()
+                            print newEl
                             '''
                             words = newEl.split(' ')
                             name = newEl[0]
