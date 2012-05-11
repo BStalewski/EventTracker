@@ -16,20 +16,34 @@ buf = StringIO( gzip_buf.read())
 html = gzip.GzipFile(fileobj=buf)
 soup = bs.BeautifulSoup(html.read())
 for link in soup.findAll('a'):
-	try:
-		gzip_buf = urllib2.urlopen("http://www.cinema-city.pl/"+link.get('href')) #fixme - zafixowane na stałe cinem-city.pl
-	except:		#fixme - nie czekać na timeout - zrobic lepiej
-		continue
-	buf = StringIO( gzip_buf.read())
-	html = gzip.GzipFile(fileobj=buf)
-	soup2 = bs.BeautifulSoup(html.read())
-	for link2 in soup2.findAll('a'):
-		try:
-			gzip_buf = urllib2.urlopen("http://www.cinema-city.pl/"+link.get('href')) #fixme - zafixowane na stałe cinem-city.pl
-		except:		#fixme - nie czekać na timeout - zrobic lepiej
-			continue
-		buf = StringIO( gzip_buf.read())
-		html = gzip.GzipFile(fileobj=buf)
-		print bs.BeautifulSoup(html.read())
-		break	#fixme - teraz zatrzymuje się na pierwszym znalezionym żeby było szybciej
-	break	#fixme - teraz zatrzymuje się na pierwszym znalezionym żeby było szybciej
+    try:
+        gzip_buf = urllib2.urlopen("http://www.cinema-city.pl/"+link.get('href')) #fixme - zafixowane na stałe cinem-city.pl
+    except:     #fixme - nie czekać na timeout - zrobic lepiej
+        continue
+    buf = StringIO( gzip_buf.read())
+    html = gzip.GzipFile(fileobj=buf)
+    soup2 = bs.BeautifulSoup(html.read())
+    for link2 in soup2.findAll('a'):
+        try:
+            #print "http://www.cinema-city.pl/"+link.get('href')) #fixme - zafixowane na stałe cinem-city.pl
+            print ( "http://www.cinema-city.pl/"+link2.get('href') )
+            gzip_buf = urllib2.urlopen("http://www.cinema-city.pl/"+link2.get('href')) #fixme - zafixowane na stałe cinem-city.pl
+        except:     #fixme - nie czekać na timeout - zrobic lepiej
+            print "except -> ", ( "http://www.cinema-city.pl/"+link2.get('href') )
+            continue
+
+
+        buf = StringIO( gzip_buf.read())
+        html = gzip.GzipFile(fileobj=buf)
+        soup3 = bs.BeautifulSoup(html.read())
+	print soup3.findAll(text=re.compile('Renny'))
+	#for sibling in soup.find(id="Renny").previous_siblings:
+	#	print repr(sibling)
+        #print soup3
+        #if renny_found( soup3 ):
+        #    print soup3
+        
+    break   #fixme - teraz zatrzymuje się na pierwszym znalezionym żeby było szybciej
+
+def renny_found( soup ):
+    print soup

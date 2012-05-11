@@ -2,7 +2,7 @@
 
 #nie działają polskie znaki
 #nie działa jeżeli w nazwie filmu jest obrazek "IMAX"
-
+from models import Person
 from cStringIO import StringIO
 from datetime import date, datetime, timedelta
 import BeautifulSoup as bs
@@ -36,6 +36,10 @@ for link in soup.findAll('a'):
         buf = StringIO( gzip_buf.read())
         html = gzip.GzipFile(fileobj=buf)
         soup3 = bs.BeautifulSoup(html.read())
+
+	print soup3.findAll(text=re.compile('Renny'))[0].findParent().findParent()
+	#for sibling in soup.find(id="Renny").previous_siblings:
+	#	print repr(sibling)
         #print soup3
         if 'Renny' in soup3.contents.__str__():
             print soup3
