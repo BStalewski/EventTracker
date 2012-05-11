@@ -23,6 +23,7 @@ def analyze():
 
     for link in soup.findAll('a'):
         try:
+            print "http://multikino.pl/pl/filmy/"+link.get('href')
             gzip_buf = opener.open("http://multikino.pl/pl/filmy/"+link.get('href'))
         except:     #fixme - nie czekać na timeout - zrobic lepiej
             continue

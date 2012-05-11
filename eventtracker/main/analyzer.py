@@ -15,12 +15,10 @@ import sys
 def analyze():
     opener = urllib2.build_opener()
     opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
-    #gzip_buf = opener.open("http://www.cinema-city.pl/index.php?module=movie&action=repertoire")
-    gzip_buf = urllib2.urlopen("http://www.cinema-city.pl/index.php?module=movie&action=repertoire")
+    gzip_buf = opener.open("http://www.cinema-city.pl/index.php?module=movie&action=repertoire")
+    #gzip_buf = urllib2.urlopen("http://www.cinema-city.pl/index.php?module=movie&action=repertoire")
     buf = StringIO( gzip_buf.read())
     html = gzip.GzipFile(fileobj=buf)
-    #soup = bs.BeautifulSoup(html.read())
-    html = buf
     soup = bs.BeautifulSoup(html.read())
     styles = []
 
