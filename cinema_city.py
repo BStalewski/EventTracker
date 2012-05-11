@@ -5,13 +5,14 @@
 
 from cStringIO import StringIO
 from datetime import date, datetime, timedelta
-import lib.BeautifulSoup as bs
+import BeautifulSoup as bs
 import urllib2
 import re
 import gzip
 import sys
 
 def get_cinema_city(address, place_id, seans_date):
+	print "--- get cinema ---"
 	results = []
 	gzip_buf = urllib2.urlopen(address)
 	buf = StringIO( gzip_buf.read())
@@ -19,6 +20,7 @@ def get_cinema_city(address, place_id, seans_date):
 	soup = bs.BeautifulSoup(html.read())
 	movies = soup('table',{'align' : 'center'})[2]('table',{'width' : '483'})[2]('tr')
 	i = len(movies) - 1
+	print movies
 	while i > 0:
 		movie = movies[i]
 		movie_id = movie('a')[0].attrs[2][1][6:]
@@ -102,14 +104,20 @@ def get_cinema_city(address, place_id, seans_date):
 	return results
 
 def importer(search_date):
-	name_table = eval('{' + open('lib/importer/cinema_config.py', 'r').read() + '}')
+	print "--- IMPORTER ---"
+	name_table = eval('{' + open('cinema_config.py', 'r').read() + '}')
 	#sys.setdefaultencoding('utf-8')
+
 	for key, value in name_table.items():
-		#print "#####WYNIKI DLA: #####",value,"\n\n\n\n\n"
+		print "#####WYNIKI DLA: #####",value,"\n\n\n\n\n"
 		try:
 			wynik = get_cinema_city('http://www.cinema-city.pl/index.php?module=movie&action=repertoire&cid='+
 				key+'&dd='+str(search_date.year)+"-"+str(search_date.month)+"-"+str(search_date.day), value, search_date)
 		except:
 			pass
 		else:
-			yield wynik
+		#	yield wynik
+			print wynik
+
+print "---- START ------"
+importer(datetime.now())
