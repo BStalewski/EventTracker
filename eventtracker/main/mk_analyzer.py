@@ -53,10 +53,12 @@ def analyze():
                                 print '2', tmpEl.get('style')
                                 tmpEl = tmpEl.findParent()
                             print tmpEl
-                            if tmpEl.get('class') not in classes:
+                            new_class = tmpEl.get('class')
+                            if new_class and new_class not in classes:
                                 classes.append( tmpEl.get('class') )
 
-                            if tmpEl.get('style') not in styles:
+                            new_style = tmpEl.get('style')
+                            if new_Style and new_style not in styles:
                                 styles.append( tmpEl.get('style') )
                             '''
                             elStyles = tmpEl.get('style').split(';')
@@ -98,6 +100,7 @@ def analyze():
             #   print soup3
     
         print "STYLEZ:", styles
+        print "KLASSEZ:", classes
         break   #fixme - teraz zatrzymuje się na pierwszym znalezionym żeby było szybciej
 
 #def analyze():
