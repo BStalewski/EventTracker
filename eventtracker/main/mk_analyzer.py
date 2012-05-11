@@ -15,34 +15,28 @@ import sys
 def analyze():
     opener = urllib2.build_opener()
     opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
-    #gzip_buf = opener.open("http://www.cinema-city.pl/index.php?module=movie&action=repertoire")
-    gzip_buf = urllib2.urlopen("http://www.cinema-city.pl/index.php?module=movie&action=repertoire")
-    buf = StringIO( gzip_buf.read())
-    html = gzip.GzipFile(fileobj=buf)
+    gzip_buf = opener.open("http://multikino.pl/pl/filmy/")
+    html = StringIO( gzip_buf.read())
     #soup = bs.BeautifulSoup(html.read())
-    html = buf
     soup = bs.BeautifulSoup(html.read())
     styles = []
 
     for link in soup.findAll('a'):
         try:
-            gzip_buf = urllib2.urlopen("http://www.cinema-city.pl/"+link.get('href')) #fixme - zafixowane na stałe cinem-city.pl
+            gzip_buf = opener.open("http://multikino.pl/pl/filmy/"+link.get('href'))
         except:     #fixme - nie czekać na timeout - zrobic lepiej
             continue
-        buf = StringIO( gzip_buf.read())
-        html = gzip.GzipFile(fileobj=buf)
+        html = StringIO( gzip_buf.read())
         soup2 = bs.BeautifulSoup(html.read())
         for link2 in soup2.findAll('a'):
             try:
-                #print "http://www.cinema-city.pl/"+link.get('href')) #fixme - zafixowane na stałe cinem-city.pl
-                print ( "http://www.cinema-city.pl/"+link2.get('href') )
-                gzip_buf = urllib2.urlopen("http://www.cinema-city.pl/"+link2.get('href')) #fixme - zafixowane na stałe cinem-city.pl
+                print ( "http://multikino.pl/pl/filmy/"+link2.get('href') )
+                gzip_buf = opener.open("http://multikino.pl/pl/filmy/"+link2.get('href'))
             except:     #fixme - nie czekać na timeout - zrobic lepiej
-                print "except -> ", ( "http://www.cinema-city.pl/"+link2.get('href') )
+                print "except -> ", ( "http://multikino.pl/pl/filmy/"+link2.get('href') )
                 continue
 
-            buf = StringIO( gzip_buf.read())
-            html = gzip.GzipFile(fileobj=buf)
+            html = StringIO( gzip_buf.read())
             soup3 = bs.BeautifulSoup(html.read())
             for person in Person.objects.all():
                 try:
@@ -94,3 +88,4 @@ def analyze():
 
 #def analyze():
     #return "Something important"
+
