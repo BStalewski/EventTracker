@@ -31,5 +31,5 @@ for link in soup.findAll('a'):
 		buf = StringIO( gzip_buf.read())
 		html = gzip.GzipFile(fileobj=buf)
 		print bs.BeautifulSoup(html.read())
-		break	#fixme - teraz zatrzymuje się na pierwszym znalezionym żeby było szybciej
+		
 	break	#fixme - teraz zatrzymuje się na pierwszym znalezionym żeby było szybciej
