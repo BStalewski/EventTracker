@@ -37,14 +37,15 @@ for link in soup.findAll('a'):
         html = gzip.GzipFile(fileobj=buf)
         soup3 = bs.BeautifulSoup(html.read())
         for name in Person
+
 	print soup3.findAll(text=re.compile('Renny'))[0].findParent().findParent()
 	#for sibling in soup.find(id="Renny").previous_siblings:
 	#	print repr(sibling)
         #print soup3
-        #if renny_found( soup3 ):
-        #    print soup3
+        if 'Renny' in soup3.contents.__str__():
+            print soup3
         
     break   #fixme - teraz zatrzymuje się na pierwszym znalezionym żeby było szybciej
 
-def renny_found( soup ):
-    print soup
+def analyze():
+    return "Something important"
