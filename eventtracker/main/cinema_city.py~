@@ -17,7 +17,7 @@ def get_cinema_city(address, place_id, seans_date):
 	buf = StringIO( gzip_buf.read())
 	html = gzip.GzipFile(fileobj=buf)
 	soup = bs.BeautifulSoup(html.read())
-	print soup.find_all('href')
+	print soup.find_all('hreff')
 	#movies = soup('table',{'align' : 'center'})[2]('table',{'width' : '483'})[2]('tr')
 	#i = len(movies) - 1
 	#print movies
