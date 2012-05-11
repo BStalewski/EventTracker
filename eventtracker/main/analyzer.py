@@ -37,12 +37,11 @@ def analyze():
 			buf = StringIO( gzip_buf.read())
 			html = gzip.GzipFile(fileobj=buf)
 			soup3 = bs.BeautifulSoup(html.read())
-			#for name in Person
-
-			try:
-				print soup3.findAll(text=re.compile('Renny'))[0].findParent().findParent()
-			except:
-				continue
+			for person in Person.objects.all():
+				try:
+					print soup3.findAll(text=re.compile(person.name+" "+person.surname))[0].findParent().findParent()
+				except:
+					continue
 			#for sibling in soup.find(id="Renny").previous_siblings:
 			#	print repr(sibling)
 			#print soup3
