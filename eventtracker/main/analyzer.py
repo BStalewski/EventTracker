@@ -36,12 +36,11 @@ for link in soup.findAll('a'):
         buf = StringIO( gzip_buf.read())
         html = gzip.GzipFile(fileobj=buf)
         soup3 = bs.BeautifulSoup(html.read())
-        print 'Renny' in soup3
         #print soup3
-        #if renny_found( soup3 ):
-        #    print soup3
+        if 'Renny' in soup3.contents.__str__():
+            print soup3
         
     break   #fixme - teraz zatrzymuje się na pierwszym znalezionym żeby było szybciej
 
-def renny_found( soup ):
-    print soup
+def analyze():
+    return "Something important"
