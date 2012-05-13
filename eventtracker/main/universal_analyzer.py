@@ -11,13 +11,6 @@ import re
 import gzip
 import sys
 
-#start = "index.php?module=movie&action=repertoire"
-#domena = "http://www.cinema-city.pl/"
-
-start = "/pl/filmy/"
-domena = "http://multikino.pl"
-rootUrl = 'http://multikino.pl/pl/filmy/'
-
 #def scan_whole_internet():
 def analyze(rootUrl):
     opener = urllib2.build_opener()
@@ -39,6 +32,8 @@ def analyze(rootUrl):
                 lowUrl = constructUrl(highUrl, link2.get('href'))
                 print lowUrl
                 content = getContent(lowUrl, gzipped, opener)
+            except RuntimeError as e:
+                print e, ':', link2.get('href')
             except:  #fixme - nie czekać na timeout - zrobic lepiej
                 print "except -> ", lowUrl
                 continue
