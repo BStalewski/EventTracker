@@ -12,34 +12,34 @@ import gzip
 import sys
 
 #def scan_whole_internet():
-def analyze():
+def analyze(rootUrl):
     opener = urllib2.build_opener()
     opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
-    gzip_buf = opener.open("http://multikino.pl/pl/filmy/")
-    html = StringIO( gzip_buf.read())
-    #soup = bs.BeautifulSoup(html.read())
-    soup = bs.BeautifulSoup(html.read())
+    gzipped = checkGzipped(rootUrl, opener)
+    soup = bs.BeautifulSoup(getContent(rootUrl, gzipped, opener))
     styles = []
     classes = []
 
     for link in soup.findAll('a'):
         try:
-            print "http://multikino.pl/"+link.get('href')
-            gzip_buf = opener.open("http://multikino.pl/"+link.get('href'))
-        except:     #fixme - nie czekać na timeout - zrobic lepiej
+            highUrl = constructUrl(rootUrl, link.get('href'))
+            content = getContent(highUrl, gzipped, opener)
+        except:  #fixme - nie czekać na timeout - zrobic lepiej
             continue
-        html = StringIO( gzip_buf.read())
-        soup2 = bs.BeautifulSoup(html.read())
+        soup2 = bs.BeautifulSoup(content)
         for link2 in soup2.findAll('a'):
             try:
-                print ( "http://multikino.pl/"+link2.get('href') )
-                gzip_buf = opener.open("http://multikino.pl/"+link2.get('href'))
-            except:     #fixme - nie czekać na timeout - zrobic lepiej
-                print "except -> ", ( "http://multikino.pl/"+link2.get('href') )
+                lowUrl = constructUrl(highUrl, link2.get('href'))
+                print lowUrl
+                content = getContent(lowUrl, gzipped, opener)
+            except RuntimeError as e:
+                print e, ':', link2.get('href')
+            except:  #fixme - nie czekać na timeout - zrobic lepiej
+                print "except -> ", lowUrl
                 continue
 
-            html = StringIO( gzip_buf.read())
-            soup3 = bs.BeautifulSoup(html.read())
+            soup3 = bs.BeautifulSoup(content)               
+
             for person in Person.objects.all():
                 foundElements = soup3.findAll(text=re.compile(person.name+" "+person.surname))
                 if foundElements != []:
@@ -61,12 +61,8 @@ def analyze():
                         if new_style and new_style not in styles:
                             print 'Dodano nowy styl:', new_style
                             styles.append( new_style )
-                        '''
-                        elStyles = tmpEl.get('style').split(';')
-                        for style in elStyles:
-                            if style not in styles:
-                                styles.append( style )
-                        '''
+
+
             for cls in classes:
                 newElements = soup3.findAll(True, cls)
                 if len( newElements ) > 0:
@@ -74,31 +70,49 @@ def analyze():
                 for newEl in newElements:
                     print newEl
 
-
-
             for style in styles:
-                #newElements = soup3.findAll(style=re.compile(style))
                 newElements = soup3.findAll(style=style)
                 if len( newElements ) > 0:
                     print 'Obiekty ze stylem:', style
                 for newEl in newElements:
                     print newEl
-                    '''
-                    words = newEl.split(' ')
-                    name = newEl[0]
-                    surname = newEl[1]
-                    print name, surname
-                    '''
-            #for sibling in soup.find(id="Renny").previous_siblings:
-            #   print repr(sibling)
-            #print soup3
-            #if 'Renny' in soup3.contents.__str__():
-            #   print soup3
     
-		print 'Znalezione style:', styles
+        print 'Znalezione style:', styles
         print 'Znalezione klasy:', classes
         break   #fixme - teraz zatrzymuje się na pierwszym znalezionym żeby było szybciej
 
-#def analyze():
-    #return "Something important"
+def getDomain(url):
+    domainEnd = url.find('/', 7) if url[:4] == 'http' else url.find('/')
+    potentialDomain = url[:domainEnd] if domainEnd != -1 else url
+    return potentialDomain if potentialDomain.count('.') > 0 else None
+
+def constructUrl(baseUrl, ahrefUrl):
+    ahrefDomain = getDomain( ahrefUrl)
+    baseDomain = getDomain( baseUrl )
+    if ahrefDomain:
+        if baseDomain != ahrefDomain:
+            raise RuntimeError("External domain")
+        return ahrefUrl
+    else:
+        return baseDomain + ahrefUrl if ahrefUrl[0] == '/' else baseUrl + ahrefUrl
+
+def checkGzipped(url, opener):
+    gzip_buf = opener.open(url)
+    buf = StringIO(gzip_buf.read())
+    html = gzip.GzipFile(fileobj=buf)
+    try:
+        html.read()
+    except:
+        return False
+    else:
+        return True
+            
+def getContent(url, gzipped, opener):
+    gzip_buf = opener.open(url)
+    buf = StringIO(gzip_buf.read())
+    if gzipped:
+        html = gzip.GzipFile(fileobj=buf)
+        return html.read()
+    else:
+        return buf.read()
 
