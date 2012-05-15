@@ -8,7 +8,6 @@ sys.setdefaultencoding('utf-8')
 #nie działają polskie znaki
 #nie działa jeżeli w nazwie filmu jest obrazek "IMAX"
 from models import Person
-from models import Event
 from cStringIO import StringIO
 from datetime import date, datetime, timedelta
 import BeautifulSoup as bs
@@ -48,75 +47,51 @@ def analyze(rootUrl):
                 continue
 
             soup3 = bs.BeautifulSoup(content)               
-	    #--------- ROZPOZNAWANIE TYTULOW --------------------------------
-	    #titles = soup3.findAll(text=link2.text)#text=re.compile(link2.text))
-	    #if(len(titles)>0):
-	    #	print "tytul dl",len(titles)," ", titles
-	    #path_of_tmpEl = []
-	    for event in Event.objects.all():
-		foundElements = soup3.findAll(text=event.title)
-		if(len(foundElements)>0):
-			tmpEl = foundElements[0].parent#findParent() # nalezy zaczac od rodzica, bo napis nie ma stylu
-			print tmpEl
-			path_of_tmpEl = []
-			while tmpEl is not None:
-				path_of_tmpEl.append((tmpEl.name,tmpEl.attrs))
-				tmpEl = tmpEl.findParent()
-			#print path_of_tmpEl
-	    l = len(path_of_tmpEl) - 2
-	    tmpSoup = soup3
-	    while l > 0:
-		#tutaj trzeba napisać coś co rozkoduje tę ścieżkę
-		#np rozkodowuje po name, ale chcemy żeby atrybuty były dobre
-		#czyli zeby atrybut o nazwie path_of_tempEl[l][1][0]
-		#miał wartość path_of_tempEl[l][1][1]
-		print 'path', path_of_tmpEl[l][0]
-		if(len(path_of_tmpEl[l][1]) == 0):
-			tmpSoup = tmpSoup(path_of_tmpEl[l][0])[0]
-		else: 
-			tmpSoup = tmpSoup(path_of_tmpEl[l][0])[0]
-		print 'soup', tmpSoup.name
-		l = l-1
 
-            #for person in Person.objects.all():
-                #foundElements = soup3.findAll(text=re.compile(person.name+" "+person.surname))
-                #if foundElements != []:
+ 	    #--------- ROZPOZNAWANIE TYTULOW --------------------------------
+	    titles = soup3.findAll(text=link2.text)#text=re.compile(link2.text))
+	    if(len(titles)>0):
+		print "tytul dl",len(titles)," ", titles
+
+            for person in Person.objects.all():
+                foundElements = soup3.findAll(text=re.compile(person.name+" "+person.surname))
+                if foundElements != []:
                     #print 'Znalezione elementy z nazwiskami:', foundElements
-                    #for el in foundElements:
-                        #tmpEl = el.findParent() # nalezy zaczac od rodzica, bo napis nie ma stylu
-                        #while not tmpEl.get('style') and not tmpEl.get('class'):
+                    for el in foundElements:
+                        tmpEl = el.findParent() # nalezy zaczac od rodzica, bo napis nie ma stylu
+                        while not tmpEl.get('style') and not tmpEl.get('class'):
                             #print "1", tmpEl
                             #print '2', tmpEl.get('style')
-                            #tmpEl = tmpEl.findParent()
+                            tmpEl = tmpEl.findParent()
                         #print 'Rodzic znalezionego elementu:'
                         #print tmpEl
-                        #new_class = tmpEl.get('class')
-                        #if new_class and new_class not in classes:
+                        new_class = tmpEl.get('class')
+                        if new_class and new_class not in classes:
                             #print 'Dodano nowa klase:', new_class
-                            #classes.append( new_class )
+                            classes.append( new_class )
 
-                        #new_style = tmpEl.get('style')
-                        #if new_style and new_style not in styles:
+                        new_style = tmpEl.get('style')
+                        if new_style and new_style not in styles:
                             #print 'Dodano nowy styl:', new_style
-                            #styles.append( new_style )
+                            styles.append( new_style )
 
 
-            #for cls in classes:
-                #newElements = soup3.findAll(True, cls)
+            for cls in classes:
+                newElements = soup3.findAll(True, cls)
                 #if len( newElements ) > 0:
-                    #print 'Obiekty klasy:', cls
+                #    print 'Obiekty klasy:', cls
                 #for newEl in newElements:
-                    #print newEl
+                #    print newEl
 
-            #for style in styles:
-                #newElements = soup3.findAll(style=style)
+            for style in styles:
+                newElements = soup3.findAll(style=style)
                 #if len( newElements ) > 0:
-                    #print 'Obiekty ze stylem:', style
+                #    print 'Obiekty ze stylem:', style
                 #for newEl in newElements:
-                    #print newEl
+                #    print newEl
     
-        #print 'Znalezione style:', styles
-        #print 'Znalezione klasy:', classes
+        print 'Znalezione style:', styles
+        print 'Znalezione klasy:', classes
         break   #fixme - teraz zatrzymuje się na pierwszym znalezionym żeby było szybciej
 
 def getDomain(url):

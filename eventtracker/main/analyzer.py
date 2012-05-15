@@ -61,7 +61,8 @@ def analyze():
 				html = gzip.GzipFile(fileobj=buf)
 				soup3 = bs.BeautifulSoup(html.read())
 			else:
-				soup3 = bs.BeautifulSoup(buf.read())				
+				soup3 = bs.BeautifulSoup(buf.read())
+
 			for person in Person.objects.all():
 				try:
 					foundElements = soup3.findAll(text=re.compile(person.name+" "+person.surname))
