@@ -60,24 +60,25 @@ def analyze(rootUrl):
 			print tmpEl
 			path_of_tmpEl = []
 			while tmpEl is not None:
-				path_of_tmpEl.append((tmpEl.name,tmpEl.attrs))
+				place = 0
+				sibling = tmpEl.previous_sibling
+				print tmpEl.name
+				print 'sibling', sibling
+#!!!!!!!!!!!!!!!!!!!!!!!!!!! TUTAJ NIE ZLAJDUJE ZIBLINGA A CHĘ SIĘ DOWIEDZIEC KTÓRY Z KOLEI ON JEST!!!!!!!!!!!!!!!!!!!!	
+				while sibling is not None:
+					place = place + 1
+					sibling = sibling.previous_element
+				path_of_tmpEl.append((tmpEl.name,place))
 				tmpEl = tmpEl.findParent()
 			#print path_of_tmpEl
 	    l = len(path_of_tmpEl) - 2
 	    tmpSoup = soup3
+	    print "path", path_of_tmpEl
 	    while l > 0:
-		#tutaj trzeba napisać coś co rozkoduje tę ścieżkę
-		#np rozkodowuje po name, ale chcemy żeby atrybuty były dobre
-		#czyli zeby atrybut o nazwie path_of_tempEl[l][1][0]
-		#miał wartość path_of_tempEl[l][1][1]
-		print 'path', path_of_tmpEl[l][0]
-		if(len(path_of_tmpEl[l][1]) == 0):
-			tmpSoup = tmpSoup(path_of_tmpEl[l][0])[0]
-		else: 
-			tmpSoup = tmpSoup(path_of_tmpEl[l][0])[0]
+		tmpSoup = tmpSoup(path_of_tmpEl[l][0])[path_of_tmpEl[l][1]]
 		print 'soup', tmpSoup.name
 		l = l-1
-
+	    print "znaleziony tekst", tmpSoup.text
             #for person in Person.objects.all():
                 #foundElements = soup3.findAll(text=re.compile(person.name+" "+person.surname))
                 #if foundElements != []:
