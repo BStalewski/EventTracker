@@ -61,24 +61,26 @@ def analyze(rootUrl):
 			path_of_tmpEl = []
 			while tmpEl is not None:
 				place = 0
-				sibling = tmpEl.previous_sibling
+				sibling = tmpEl.previousSibling
 				print tmpEl.name
 				print 'sibling', sibling
 #!!!!!!!!!!!!!!!!!!!!!!!!!!! TUTAJ NIE ZLAJDUJE ZIBLINGA A CHĘ SIĘ DOWIEDZIEC KTÓRY Z KOLEI ON JEST!!!!!!!!!!!!!!!!!!!!	
 				while sibling is not None:
-					place = place + 1
-					sibling = sibling.previous_element
+					place = place + 1 # uwaga: soup czasami zwraca '\n' jako rodzeństwo
+					sibling = sibling.previousSibling
 				path_of_tmpEl.append((tmpEl.name,place))
 				tmpEl = tmpEl.findParent()
 			#print path_of_tmpEl
 	    l = len(path_of_tmpEl) - 2
 	    tmpSoup = soup3
+	    path_of_tmpEl.reverse()
 	    print "path", path_of_tmpEl
-	    while l > 0:
-		tmpSoup = tmpSoup(path_of_tmpEl[l][0])[path_of_tmpEl[l][1]]
-		print 'soup', tmpSoup.name
-		l = l-1
-	    print "znaleziony tekst", tmpSoup.text
+        #while l > 0: #    TO wykomentowalem
+        #tmpSoup = tmpSoup(path_of_tmpEl[l][0])[path_of_tmpEl[l][1]] #To wykomentowalem #tmpSoup = getFromPath(tmpSoup, path_of_tmpEl)
+        tmpSoup = getFromPath(tmpSoup, path_of_tmpEl)
+        print 'soup', tmpSoup.name
+        l = l-1
+        print "znaleziony tekst", tmpSoup.text
             #for person in Person.objects.all():
                 #foundElements = soup3.findAll(text=re.compile(person.name+" "+person.surname))
                 #if foundElements != []:
@@ -155,3 +157,13 @@ def getContent(url, gzipped, opener):
     else:
         return buf.read()
 
+def getFromPath(soup, path):
+    el = soup.find('html')
+    path_copy = path[:]
+    while path_copy[0][0] != 'html':
+        del path_copy[0]
+    del path_copy[0] # usuwamy poziom z htmlem, teraz element zerowy jest dzieckiem htmla
+    for _, i in path_copy:   # na początku jest obiekt o nazwie documents
+        el = el.contents[i]
+
+    return el
