@@ -7,8 +7,7 @@ sys.setdefaultencoding('utf-8')
 
 #nie działają polskie znaki
 #nie działa jeżeli w nazwie filmu jest obrazek "IMAX"
-from models import Person
-from models import Event
+from models import Obiekt, Url_json
 from cStringIO import StringIO
 from datetime import date, datetime, timedelta
 import BeautifulSoup as bs
@@ -17,8 +16,12 @@ import re
 import gzip
 import sys
 
+import json
+
+keys = 6
+
 #def scan_whole_internet():
-def analyze(rootUrl):
+def teach(rootUrl, teach_index):
 	opener = urllib2.build_opener()
 	opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
 	gzipped = checkGzipped(rootUrl, opener)
@@ -26,10 +29,15 @@ def analyze(rootUrl):
 	styles = []
 	classes = []
 
+	visited = {}
+	visited[rootUrl] = True
 	for link in soup.findAll('a'):
 		try:
 			highUrl = constructUrl(rootUrl, link.get('href'))
+			if highUrl in visited:
+				continue
 			content = getContent(highUrl, gzipped, opener)
+			visited[highUrl] = True
 		except:  #fixme - nie czekać na timeout - zrobic lepiej
 			continue
 		soup2 = bs.BeautifulSoup(content)
@@ -40,7 +48,10 @@ def analyze(rootUrl):
 			try:
 				lowUrl = constructUrl(highUrl, link2.get('href'))
 				print lowUrl
+				if lowUrl in visited:
+					continue
 				content = getContent(lowUrl, gzipped, opener)
+				visited[lowUrl] = True
 			except RuntimeError as e:
 				print e, ':', link2.get('href')
 			except:  #fixme - nie czekać na timeout - zrobic lepiej
@@ -48,81 +59,19 @@ def analyze(rootUrl):
 				continue
 
 			soup3 = bs.BeautifulSoup(content)			   
-			#--------- ROZPOZNAWANIE TYTULOW --------------------------------
-			#titles = soup3.findAll(text=link2.text)#text=re.compile(link2.text))
-			#if(len(titles)>0):
-			#   print "tytul dl",len(titles)," ", titles
-			#path_of_tmpEl = []
-			for event in Event.objects.all():
-				foundElements = soup3.findAll(text=event.title)
-				print 'Znaleziono:', len( foundElements )
-				if len(foundElements) > 0 :
-					tmpEl = foundElements[0].parent#findParent() # nalezy zaczac od rodzica, bo napis nie ma stylu
-					print tmpEl
-					path_of_tmpEl = []
-					while tmpEl is not None:
-						place = 0
-						sibling = tmpEl.previousSibling
-						#print tmpEl.name
-						#print 'sibling', sibling
-						#!!!!!!!!!!!!!!!!!!!!!!!!!!! TUTAJ NIE ZLAJDUJE ZIBLINGA A CHĘ SIĘ DOWIEDZIEC KTÓRY Z KOLEI ON JEST!!!!!!!!!!!!!!!!!!!! 
-						while sibling is not None:
-							place = place + 1 # uwaga: soup czasami zwraca '\n' jako rodzeństwo
-							sibling = sibling.previousSibling
-						path_of_tmpEl.append((tmpEl.name,place))
-						tmpEl = tmpEl.findParent()
-					#print path_of_tmpEl
-					print '--------------------------------------'
-					l = len(path_of_tmpEl) - 2
-					tmpSoup = soup3
-					path_of_tmpEl.reverse()
-					print "path", path_of_tmpEl
-					#while l > 0: #	TO wykomentowalem
-					#tmpSoup = tmpSoup(path_of_tmpEl[l][0])[path_of_tmpEl[l][1]] #To wykomentowalem #tmpSoup = getFromPath(tmpSoup, path_of_tmpEl)
-					tmpSoup = getFromPath(tmpSoup, path_of_tmpEl)
-					print 'soup', tmpSoup.name
-					l = l-1
-					print "znaleziony tekst", tmpSoup.text
-			#for person in Person.objects.all():
-				#foundElements = soup3.findAll(text=re.compile(person.name+" "+person.surname))
-				#if foundElements != []:
-					#print 'Znalezione elementy z nazwiskami:', foundElements
-					#for el in foundElements:
-						#tmpEl = el.findParent() # nalezy zaczac od rodzica, bo napis nie ma stylu
-						#while not tmpEl.get('style') and not tmpEl.get('class'):
-							#print "1", tmpEl
-							#print '2', tmpEl.get('style')
-							#tmpEl = tmpEl.findParent()
-						#print 'Rodzic znalezionego elementu:'
-						#print tmpEl
-						#new_class = tmpEl.get('class')
-						#if new_class and new_class not in classes:
-							#print 'Dodano nowa klase:', new_class
-							#classes.append( new_class )
-
-						#new_style = tmpEl.get('style')
-						#if new_style and new_style not in styles:
-							#print 'Dodano nowy styl:', new_style
-							#styles.append( new_style )
-
-
-			#for cls in classes:
-				#newElements = soup3.findAll(True, cls)
-				#if len( newElements ) > 0:
-					#print 'Obiekty klasy:', cls
-				#for newEl in newElements:
-					#print newEl
-
-			#for style in styles:
-				#newElements = soup3.findAll(style=style)
-				#if len( newElements ) > 0:
-					#print 'Obiekty ze stylem:', style
-				#for newEl in newElements:
-					#print newEl
-	
-		#print 'Znalezione style:', styles
-		#print 'Znalezione klasy:', classes
-		break   #fixme - teraz zatrzymuje się na pierwszym znalezionym żeby było szybciej
+			obiekt = Obiekt.objects.all()[teach_index]
+			if not objectFound(obiekt, soup3):
+				continue
+			
+			paths = findPaths(obiekt, soup)
+			jsonPaths = json.dumps(paths)
+			
+			newUrlJson = Url_json(url=link2, json=jsonPaths)
+			newUrlJson.save()
+			print 'Nauczylem sie na urlu:', rootUrl
+			return
+		break
+	print 'Nie nauczylem sie na urlu:', rootUrl
 
 def getDomain(url):
 	domainEnd = url.find('/', 7) if url[:4] == 'http' else url.find('/')
@@ -169,3 +118,49 @@ def getFromPath(soup, path):
 		el = el.contents[i]
 
 	return el
+	
+def notEmptyFields( obj ):
+	fields = []
+	for i in range(keys):
+		key = 'pole' + str(i+1)
+		searched = getattr(obj, key)
+		if searched == '':
+			break
+		fields.append(searched)
+	return fields
+
+def objectFound( obj, soup ):
+	fields = notEmptyFields( obj )
+	for field in fields:
+		if len( soup.findAll(text=field) ) == 0:
+			return False
+	
+	return True
+	
+def findPaths( obj, soup ):
+	paths = []
+	for i in range(keys):
+		key = 'pole' + str(i+1)
+		searched = getattr(obj, key)
+		if searched == '':
+			paths.append( [] )
+		else:
+			element = soup.findAll(text=searched)[0] # fixme: niekoniecznie pierwszy
+			tmpEl = foundElements[0].parent#findParent() # nalezy zaczac od rodzica, bo napis nie ma stylu
+			path_of_tmpEl = []
+			while tmpEl is not None:
+				place = 0
+				sibling = tmpEl.previousSibling 
+				while sibling is not None:
+					place = place + 1 # uwaga: soup czasami zwraca '\n' jako rodzeństwo
+					sibling = sibling.previousSibling
+				path_of_tmpEl.append((tmpEl.name,place))
+				tmpEl = tmpEl.findParent()
+			path_of_tmpEl.reverse()
+			while path_of_tmpEl[0][0] != 'html':
+				del path_of_tmpEl[0]
+			del path_of_tmpEl[0]
+			paths.append( path_of_tmpEl )
+	
+	return paths
+	
