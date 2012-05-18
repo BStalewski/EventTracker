@@ -63,10 +63,10 @@ def teach(rootUrl, teach_index):
 			if not objectFound(obiekt, soup3):
 				continue
 			
-			paths = findPaths(obiekt, soup)
+			paths = findPaths(obiekt, soup3)
 			jsonPaths = json.dumps(paths)
 			
-			newUrlJson = Url_json(url=link2, json=jsonPaths)
+			newUrlJson = Url_json(url=rootUrl, json=jsonPaths)
 			newUrlJson.save()
 			print 'Nauczylem sie na urlu:', rootUrl
 			return
@@ -132,7 +132,8 @@ def notEmptyFields( obj ):
 def objectFound( obj, soup ):
 	fields = notEmptyFields( obj )
 	for field in fields:
-		if len( soup.findAll(text=field) ) == 0:
+		print len( soup.findAll(text=field) )
+		if len( soup.findAll(text=field) )== 0:
 			return False
 	
 	return True
@@ -145,8 +146,9 @@ def findPaths( obj, soup ):
 		if searched == '':
 			paths.append( [] )
 		else:
-			element = soup.findAll(text=searched)[0] # fixme: niekoniecznie pierwszy
-			tmpEl = foundElements[0].parent#findParent() # nalezy zaczac od rodzica, bo napis nie ma stylu
+			# fixme: niekoniecznie pierwszy
+			# fixme: porządne wyrażenie regularne
+			tmpEl = soup.findAll(text=searched)[0].parent
 			path_of_tmpEl = []
 			while tmpEl is not None:
 				place = 0
@@ -161,6 +163,6 @@ def findPaths( obj, soup ):
 				del path_of_tmpEl[0]
 			del path_of_tmpEl[0]
 			paths.append( path_of_tmpEl )
-	
+	print '#### PATHS ####', paths
 	return paths
 	
