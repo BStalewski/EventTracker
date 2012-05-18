@@ -58,10 +58,17 @@ def search(rootUrl):
 				continue
 
 			jsonPaths = Url_json.objects.filter(url=rootUrl).values()[0]
-			#paths = jsonPaths.json
 			paths = json.loads(jsonPaths['json'])
 			soup3 = bs.BeautifulSoup(content)
 			
+			if lowUrl == 'http://multikino.pl/pl/filmy/dyktator/':
+				print paths
+				for path in paths:
+					if path != []:
+						for x in findFromPath(soup3, path).contents:
+							print x
+				print 'qweqeweerewrerwr'
+
 			if objectOnSite(soup3, paths):
 				newObject = Obiekt()
 				for (i,path) in enumerate(paths):
@@ -73,6 +80,7 @@ def search(rootUrl):
 						setattr( newObject, key, value )
 						print key, ':', value
 
+				print paths
 				print 'WOW, wywalam sie a potem zapisuje obiekt:)'
 				print lowUrl
 				print newObject
@@ -127,7 +135,7 @@ def getContent(url, gzipped, opener):
 		return buf.read()
 
 def findFromPath(soup, path):
-	el = soup.find('body')
+	el = soup.find('html')
 	for name, i in path:
 		el = el.contents[i]
 		if el.name != name:
