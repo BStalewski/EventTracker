@@ -48,7 +48,6 @@ def teach(rootUrl, teach_index):
 			continue
 		
 		soup = bs.BeautifulSoup(content)
-		print 'len', len(soup.findAll('a'))
 		for link in soup.findAll('a'):
 			try:
 				lowUrl = constructUrl(highUrl, link.get('href'))
@@ -65,6 +64,7 @@ def teach(rootUrl, teach_index):
 
 		obiekt = Obiekt.objects.all()[teach_index]
 		if objectFound(obiekt, soup):
+			print highUrl
 			paths = findPaths(obiekt, soup)
 			jsonPaths = json.dumps(paths)
 			
@@ -74,7 +74,7 @@ def teach(rootUrl, teach_index):
 			return
 		learn_limit = learn_limit + 1
 		print learn_limit + 1," # ",level," # ",highUrl
-		if learn_limit > 123 or level == 2:
+		if learn_limit > 123 or level == 3:
 			print '### NIE NAUCZYLEM SIE!!! ###:', rootUrl
 			return
 		
@@ -157,6 +157,7 @@ def findPaths( obj, soup ):
 			# fixme: niekoniecznie pierwszy
 			# fixme: porządne wyrażenie regularne
 			tmpEl = soup.findAll(text=searched)[0].parent
+			print tmpEl
 			path_of_tmpEl = []
 			while tmpEl is not None:
 				place = 0
@@ -167,9 +168,7 @@ def findPaths( obj, soup ):
 				path_of_tmpEl.append((tmpEl.name,place))
 				tmpEl = tmpEl.findParent()
 			path_of_tmpEl.reverse()
-			while path_of_tmpEl[0][0] != 'html':
-				del path_of_tmpEl[0]
-			del path_of_tmpEl[0]
+			del path_of_tmpEl[0]	#usuwamy pierwszy element [document]
 			paths.append( path_of_tmpEl )
 	print '#### PATHS ####', paths
 	return paths
