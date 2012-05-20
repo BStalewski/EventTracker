@@ -66,6 +66,7 @@ def search(rootUrl):
 			link_queue.append((lowUrl,level+1))
 			visited[lowUrl] = True
 
+		print highUrl
 		if objectOnSite(soup, paths):
 			newObject = Obiekt()
 			for (i,path) in enumerate(paths):
@@ -73,7 +74,6 @@ def search(rootUrl):
 					continue
 				else:
 					key = 'pole' + str(i+1)
-					###value = findFromPath(soup3, path).text
 					value = findFromPath(soup, path)
 					setattr(newObject, key, value)
 					print key, ':',
@@ -83,7 +83,7 @@ def search(rootUrl):
 						pass
 
 			print 'Zapisuje obiekt'
-			#raise RuntimeError()
+			raise RuntimeError()
 			newObject.save()
 			addedCount += 1
 			

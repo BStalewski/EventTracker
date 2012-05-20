@@ -118,6 +118,7 @@ def findPaths( obj, soup ):
 		if searched == '':
 			paths.append( [] )
 		else:
+			#tmpEl = soup.findAll(text=re.comile(searched))[0]
 			tmpEl = soup.findAll(text=searched)[0]
 			path = []
 			while tmpEl is not None:

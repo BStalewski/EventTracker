@@ -139,6 +139,7 @@ keys = 6
 #rootUrl = 'http://multikino.pl/pl/filmy/seksualni-niebezpieczni/'
 #rootUrl = 'http://multikino.pl/pl/filmy/dyktator/'
 rootUrl = 'http://www.cinema-city.pl/index.php?module=movie&id=2723'
+#rootUrl = 'http://www.cinema-city.pl/index.php?module=movie&id=2687'
 opener = urllib2.build_opener()
 opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
 
@@ -165,7 +166,10 @@ def showPathsValues(rootUrl):
 	soup = bs.BeautifulSoup(content)
 
 	print objectOnSite(soup, paths)
-
+	x1 = findFromPathNew(soup, paths[0])
+	print x1
+	x2 = findFromPathNew(soup, paths[1])
+	print x2
 	'''
 	for path in paths:
 		if path != []:
@@ -195,5 +199,6 @@ def showPole(rootUrl):
 	x2 = findFromPathNew(soup, paths[1])
 	print x2
 
-#showPole(rootUrl)
-showPathsValues(rootUrl)
+#showPathsValues(rootUrl)
+showPole(rootUrl)
+
