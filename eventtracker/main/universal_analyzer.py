@@ -26,8 +26,6 @@ def teach(rootUrl, teach_index):
 	opener = urllib2.build_opener()
 	opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
 	gzipped = checkGzipped(rootUrl, opener)
-	styles = []
-	classes = []
 
 	visited = {}
 	link_queue = deque([(rootUrl, 0)])
@@ -66,6 +64,7 @@ def teach(rootUrl, teach_index):
 		if objectFound(obiekt, soup):
 			print highUrl
 			paths = findPaths(obiekt, soup)
+			print paths
 			jsonPaths = json.dumps(paths)
 			
 			newUrlJson = Url_json(url=rootUrl, json=jsonPaths)
@@ -74,7 +73,7 @@ def teach(rootUrl, teach_index):
 			return
 		learn_limit = learn_limit + 1
 		print learn_limit + 1," # ",level," # ",highUrl
-		if learn_limit > 123 or level == 3:
+		if learn_limit > 1230 or level == 3:
 			print '### NIE NAUCZYLEM SIE!!! ###:', rootUrl
 			return
 		
@@ -141,7 +140,8 @@ def notEmptyFields( obj ):
 def objectFound( obj, soup ):
 	fields = notEmptyFields( obj )
 	for field in fields:
-		if len( soup.findAll(text=field) )== 0:
+		#if len( soup.findAll(text=field) )== 0:
+		if len( soup.findAll(text=re.compile(field)) ) == 0:
 			return False
 	
 	return True
@@ -154,22 +154,24 @@ def findPaths( obj, soup ):
 		if searched == '':
 			paths.append( [] )
 		else:
-			# fixme: niekoniecznie pierwszy
-			# fixme: porządne wyrażenie regularne
-			tmpEl = soup.findAll(text=searched)[0].parent
-			print tmpEl
-			path_of_tmpEl = []
+			tmpEl = soup.findAll(text=searched)[0]
+			path = []
 			while tmpEl is not None:
 				place = 0
 				sibling = tmpEl.previousSibling 
 				while sibling is not None:
-					place = place + 1 # uwaga: soup czasami zwraca '\n' jako rodzeństwo
+					place += 1
 					sibling = sibling.previousSibling
-				path_of_tmpEl.append((tmpEl.name,place))
-				tmpEl = tmpEl.findParent()
-			path_of_tmpEl.reverse()
-			del path_of_tmpEl[0]	#usuwamy pierwszy element [document]
-			paths.append( path_of_tmpEl )
-	print '#### PATHS ####', paths
+				try:
+					name = tmpEl.name
+				except:
+					name = ''
+				path.append((name,place))
+				tmpEl = tmpEl.parent
+
+			path.reverse()
+			del path[0]	#usuwamy pierwszy element [document]
+			paths.append( path )
+	#print '#### PATHS ####', paths
 	return paths
 	

@@ -9,7 +9,7 @@ sys.setdefaultencoding('utf-8')
 #nie działa jeżeli w nazwie filmu jest obrazek "IMAX"
 from models import Obiekt, Url_json
 from cStringIO import StringIO
-from datetime import date, datetime, timedelta
+from collections import deque
 import BeautifulSoup as bs
 import urllib2
 import re
@@ -19,74 +19,70 @@ import sys
 import json
 
 keys = 6
-
+	
 #def scan_whole_internet():
 def search(rootUrl):
 	opener = urllib2.build_opener()
 	opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
 	gzipped = checkGzipped(rootUrl, opener)
-	soup = bs.BeautifulSoup(getContent(rootUrl, gzipped, opener))
 
 	visited = {}
-	visited[rootUrl] = True
+	link_queue = deque([(rootUrl, 0)])
+
 	addedCount = 0
-	for link in soup.findAll('a'):
+	jsonPaths = Url_json.objects.filter(url=rootUrl).values()[0]
+	paths = json.loads(jsonPaths['json'])
+
+	while True:
+		if len(link_queue) == 0:
+			print "### PUSTA KOLEJKA LINKOW ###"
+			return
 		try:
-			highUrl = constructUrl(rootUrl, link.get('href'))
-			if highUrl in visited:
-				continue
+			(highUrl, level) = link_queue.popleft()
 			content = getContent(highUrl, gzipped, opener)
 			visited[highUrl] = True
-		except:  #fixme - nie czekać na timeout - zrobic lepiej
+		except RuntimeError as e:
+			#print e, ':', highUrl
 			continue
-		soup2 = bs.BeautifulSoup(content)
-		for link2 in soup2.findAll('a'):
-			# jeżeli tekst w linku jest pusty to to nie jest odnośnik filmu ----------
-			if len(link2.text) == 0 :
-				continue
+		except Exception as e:  #fixme - nie czekać na timeout - zrobic lepiej
+			#print "except -> ", highUrl
+			continue
+
+		soup = bs.BeautifulSoup(content)
+		for link in soup.findAll('a'):
 			try:
-				lowUrl = constructUrl(highUrl, link2.get('href'))
-				print lowUrl
-				if lowUrl in visited:
-					continue
-				content = getContent(lowUrl, gzipped, opener)
-				visited[lowUrl] = True
+				lowUrl = constructUrl(highUrl, link.get('href'))
 			except RuntimeError as e:
-				print e, ':', link2.get('href')
-			except:  #fixme - nie czekać na timeout - zrobic lepiej
-				print "except -> ", lowUrl
+				#print e, ':', link.get('href')
 				continue
+			except:
+				#print "except -> ", highUrl
+				continue
+			if lowUrl in visited:
+				continue
+			link_queue.append((lowUrl,level+1))
+			visited[lowUrl] = True
 
-			jsonPaths = Url_json.objects.filter(url=rootUrl).values()[0]
-			paths = json.loads(jsonPaths['json'])
-			soup3 = bs.BeautifulSoup(content)
-			
-			if lowUrl == 'http://multikino.pl/pl/filmy/dyktator/':
-				print paths
-				for path in paths:
-					if path != []:
-						for x in findFromPath(soup3, path).contents:
-							print x
-				print 'qweqeweerewrerwr'
+		if objectOnSite(soup, paths):
+			newObject = Obiekt()
+			for (i,path) in enumerate(paths):
+				if path == []:
+					continue
+				else:
+					key = 'pole' + str(i+1)
+					###value = findFromPath(soup3, path).text
+					value = findFromPath(soup, path)
+					setattr(newObject, key, value)
+					print key, ':',
+					try:
+						print value
+					except:
+						pass
 
-			if objectOnSite(soup3, paths):
-				newObject = Obiekt()
-				for (i,path) in enumerate(paths):
-					if path == []:
-						continue
-					else:
-						key = 'pole' + str(i+1)
-						value = findFromPath(soup3, path).text
-						setattr( newObject, key, value )
-						print key, ':', value
-
-				print paths
-				print 'WOW, wywalam sie a potem zapisuje obiekt:)'
-				print lowUrl
-				print newObject
-				#raise RuntimeError()
-				#newObject.save()
-				addedCount += 1
+			print 'Zapisuje obiekt'
+			#raise RuntimeError()
+			newObject.save()
+			addedCount += 1
 			
 	return addedCount
 
@@ -135,11 +131,15 @@ def getContent(url, gzipped, opener):
 		return buf.read()
 
 def findFromPath(soup, path):
-	el = soup.find('html')
-	for name, i in path:
+	el = soup.find(path[0][0])
+	pathCopy = path[1:]
+	for name, i in pathCopy:
 		el = el.contents[i]
-		if el.name != name:
+		try:
+			elName = el.name
+		except:
+			elName = ''
+		if elName != name:
 			raise RuntimeError()
 
 	return el
-	
