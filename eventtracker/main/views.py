@@ -19,6 +19,10 @@ def main(request, url='http://multikino.pl/pl/filmy/'):
 def multikino(request):
     return main(request, url='http://multikino.pl/pl/filmy/')
 
+# url: /main/lastfm/
+def lastfm( request ):
+    return main(request, url='http://www.last.fm/events')
+
 # url: /main/cinema/
 def cinemacity(request):
     return main(request, url='http://www.cinema-city.pl/index.php?module=movie&action=repertoire')
