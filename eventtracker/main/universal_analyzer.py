@@ -46,7 +46,10 @@ def teach(rootUrl, teach_index):
 			continue
 		
 		soup = bs.BeautifulSoup(content)
+	        print soup
+		print 'ilosc a ',len(soup.findAll('a'))
 		for link in soup.findAll('a'):
+			print link.get('href')
 			try:
 				lowUrl = constructUrl(highUrl, link.get('href'))
 			except RuntimeError as e:

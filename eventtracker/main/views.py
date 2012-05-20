@@ -12,6 +12,9 @@ def main( request, url='http://multikino.pl/pl/filmy/'):
     content = ua.teach(url,0)
     return HttpResponse(content)
 
+def lastfm( request ):
+    return main(request, url='http://www.last.fm/events')
+
 def multikino( request ):
     return main(request, url='http://multikino.pl/pl/filmy/')
 
