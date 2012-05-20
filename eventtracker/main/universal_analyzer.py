@@ -22,7 +22,8 @@ from common import *
 keys = 6
 
 #def scan_whole_internet():
-def teach(rootUrl, teach_index):
+def teach(rootUrl, key1, key2=''):
+#def teach(rootUrl, teach_index):
 	opener = urllib2.build_opener()
 	opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
 	gzipped = checkGzipped(rootUrl, opener)
@@ -60,7 +61,7 @@ def teach(rootUrl, teach_index):
 			link_queue.append((lowUrl,level+1))
 			visited[lowUrl] = True
 
-		obiekt = Obiekt.objects.all()[teach_index]
+		obiekt = Obiekt.objects.filter(url=rootUrl, pole1=key1, pole2=key2)[0]
 		if objectFound(obiekt, soup):
 			print highUrl
 			paths = findPaths(obiekt, soup)
@@ -70,7 +71,8 @@ def teach(rootUrl, teach_index):
 			newUrlJson = Url_json(url=rootUrl, json=jsonPaths)
 			newUrlJson.save()
 			print 'Nauczylem sie na urlu:', highUrl
-			return
+			return (paths, highUrl)
+
 		learn_limit = learn_limit + 1
 		print learn_limit + 1," # ",level," # ",highUrl
 		if learn_limit > 1230 or level == 3:
@@ -78,7 +80,6 @@ def teach(rootUrl, teach_index):
 			return
 		
 	print 'Nie nauczylem sie na urlu:', rootUrl
-
 
 def getFromPath(soup, path):
 	el = soup.find('html')

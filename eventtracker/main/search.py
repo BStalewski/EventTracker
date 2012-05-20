@@ -23,7 +23,7 @@ from common import *
 keys = 6
 	
 #def scan_whole_internet():
-def search(rootUrl):
+def search(rootUrl, limit=None):
 	opener = urllib2.build_opener()
 	opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
 	gzipped = checkGzipped(rootUrl, opener)
@@ -31,7 +31,7 @@ def search(rootUrl):
 	visited = {}
 	link_queue = deque([(rootUrl, 0)])
 
-	addedCount = 0
+	added = []
 	jsonPaths = Url_json.objects.filter(url=rootUrl).values()[0]
 	paths = json.loads(jsonPaths['json'])
 
@@ -69,6 +69,8 @@ def search(rootUrl):
 		print highUrl
 		if objectOnSite(soup, paths):
 			newObject = Obiekt()
+			newObject.url = rootUrl
+			newObjectCopy = {'url': rootUrl}
 			for (i,path) in enumerate(paths):
 				if path == []:
 					continue
@@ -76,6 +78,7 @@ def search(rootUrl):
 					key = 'pole' + str(i+1)
 					value = findFromPath(soup, path)
 					setattr(newObject, key, value)
+					newObjectCopy[ key ] = value
 					print key, ':',
 					try:
 						print value
@@ -83,11 +86,12 @@ def search(rootUrl):
 						pass
 
 			print 'Zapisuje obiekt'
-			raise RuntimeError()
 			newObject.save()
-			addedCount += 1
+			added.append(newObjectCopy)
+			if limit is not None and len(added) >= limit:
+				break
 			
-	return addedCount
+	return added
 
 def objectOnSite(soup, paths):
 	for (i,path) in enumerate(paths):

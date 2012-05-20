@@ -1,16 +1,15 @@
 <html>
 	<head>
 		<title>Wprowadź dane początkowe</title>
-    <!--<link rel="stylesheet" href="/static/style.css" /> -->
 	</head>
 	<body>
 		<h1>Dane początkowe</h1>
-			<form action="/main/teach/" method="post" enctype="multipart/form-data">
-				<table>
-        {{ form.as_table }}
-        </table>
-				<input type="submit" value="Dodaj pozycję i rozpocznij wyszukiwanie" />
-			</form>
+		<form action="/teach/" method="post" enctype="multipart/form-data">
+			<table>
+				{{ form.as_table }}
+			</table>
+			<input type="submit" value="Dodaj pozycję" />
+		</form>
 	</body>
 </html>
 
