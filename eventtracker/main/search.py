@@ -130,16 +130,17 @@ def getContent(url, gzipped, opener):
 	else:
 		return buf.read()
 
-def findFromPath(soup, path):
-	el = soup.find(path[0][0])
-	pathCopy = path[1:]
-	for name, i in pathCopy:
+def findFromPathNew(soup, path):
+	el = soup
+	for name, i in path:
 		el = el.contents[i]
 		try:
 			elName = el.name
 		except:
 			elName = ''
+		print elName, i
 		if elName != name:
 			raise RuntimeError()
 
 	return el
+

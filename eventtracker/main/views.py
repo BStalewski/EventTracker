@@ -21,3 +21,9 @@ def searchNew( request, url='http://multikino.pl/pl/filmy/' ):
     added = str( search(url) )
     return HttpResponse( added )
 
+def searchMultikino( request ):
+    return searchNew( request, url='http://multikino.pl/pl/filmy/')
+
+def searchCinemacity( request ):
+    return searchNew( request, url='http://www.cinema-city.pl/index.php?module=movie&action=repertoire')
+

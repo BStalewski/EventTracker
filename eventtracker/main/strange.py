@@ -61,9 +61,8 @@ def findFromPath(soup, path):
 	return el
 
 def findFromPathNew(soup, path):
-	el = soup.find(path[0][0])
-	pathCopy = path[1:]
-	for name, i in pathCopy:
+	el = soup
+	for name, i in path:
 		el = el.contents[i]
 		try:
 			elName = el.name
@@ -118,12 +117,12 @@ def findPaths( obj, soup ):
 				tmpEl = tmpEl.parent
 
 			path.reverse()
+			print 'FULL_PATH##########', path
 			del path[0]	#usuwamy pierwszy element [document]
 			paths.append( path )
 	print '#### PATHS ####', paths
 	return paths
 	
-keys = 6
 def notEmptyFields( obj ):
 	fields = []
 	for i in range(keys):
@@ -134,18 +133,15 @@ def notEmptyFields( obj ):
 		fields.append(searched)
 	return fields
 
-
+keys = 6
+#rootUrl = 'http://multikino.pl/pl/filmy/avengers-3d-dubbing/'
 #rootUrl = 'http://multikino.pl/pl/filmy/projekt-x/'
 #rootUrl = 'http://multikino.pl/pl/filmy/seksualni-niebezpieczni/'
 #rootUrl = 'http://multikino.pl/pl/filmy/dyktator/'
-rootUrl = 'http://multikino.pl/pl/filmy/avengers-3d-dubbing/'
+rootUrl = 'http://www.cinema-city.pl/index.php?module=movie&id=2723'
 opener = urllib2.build_opener()
 opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
-gzipped = checkGzipped(rootUrl, opener)
-content = getContent(rootUrl, gzipped, opener)
 
-soup = bs.BeautifulSoup(content)
-'''
 paths = [
 	[["body", 3], ["div", 3], ["div", 1], ["div", 1], ["div", 5], ["h1", 1]],
 	[["body", 3], ["div", 3], ["div", 1], ["div", 1], ["div", 11], ["div", 5], ["p", 0]],
@@ -155,27 +151,38 @@ paths = [
 	[]
 ]
 
-print objectOnSite(soup, paths)
+def showPathsValues(rootUrl):
+	gzipped = checkGzipped(rootUrl, opener)
+	content = getContent(rootUrl, gzipped, opener)
+	soup = bs.BeautifulSoup(content)
 
-for path in paths:
-	if path != []:
-		for x in findFromPath(soup, path).contents:
-			print x
-'''
-class x:
-	pole1 = 'Avengers 3D - dubbing'
-	pole2 = 'Joss Whedon'
-	pole3 = ''
-	pole4 = ''
-	pole5 = ''
-	pole6 = ''
+	print objectOnSite(soup, paths)
 
-ooo = x()
+	for path in paths:
+		if path != []:
+			for x in findFromPath(soup, path).contents:
+				print x
 
-#print objectFound(ooo, soup)
-paths = findPaths(ooo, soup)
-x1 = findFromPathNew(soup, paths[0])
-x2 = findFromPathNew(soup, paths[1])
+def showPole(rootUrl):
+	gzipped = checkGzipped(rootUrl, opener)
+	content = getContent(rootUrl, gzipped, opener)
+	soup = bs.BeautifulSoup(content)
+	class x:
+		pole1 = 'Avengers 3D (dubbing)'
+		#pole1 = 'Avengers 3D - dubbing' #'Avengers 3D - dubbing'
+		pole2 = 'Joss Whedon'
+		pole3 = ''
+		pole4 = ''
+		pole5 = ''
+		pole6 = ''
 
-print x1
-print x2
+	ooo = x()
+
+	paths = findPaths(ooo, soup)
+	x1 = findFromPathNew(soup, paths[0])
+	print x1
+
+	x2 = findFromPathNew(soup, paths[1])
+	print x2
+
+showPole(rootUrl)

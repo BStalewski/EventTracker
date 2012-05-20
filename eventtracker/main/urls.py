@@ -5,4 +5,6 @@ urlpatterns = patterns('main.views',
     (r'^multi/$', 'multikino'),
     (r'^cinema/$', 'cinemacity'),
     (r'^search/$', 'searchNew'),
+    (r'^search/multi/$', 'searchMultikino'),
+    (r'^search/cinema/$', 'searchCinemacity'),
 )
