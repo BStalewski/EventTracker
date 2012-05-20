@@ -134,11 +134,11 @@ def notEmptyFields( obj ):
 	return fields
 
 keys = 6
-#rootUrl = 'http://multikino.pl/pl/filmy/avengers-3d-dubbing/'
+rootUrl = 'http://multikino.pl/pl/filmy/avengers-3d-dubbing/'
 #rootUrl = 'http://multikino.pl/pl/filmy/projekt-x/'
 #rootUrl = 'http://multikino.pl/pl/filmy/seksualni-niebezpieczni/'
 #rootUrl = 'http://multikino.pl/pl/filmy/dyktator/'
-rootUrl = 'http://www.cinema-city.pl/index.php?module=movie&id=2723'
+#rootUrl = 'http://www.cinema-city.pl/index.php?module=movie&id=2723'
 #rootUrl = 'http://www.cinema-city.pl/index.php?module=movie&id=2687'
 opener = urllib2.build_opener()
 opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
@@ -182,9 +182,9 @@ def showPole(rootUrl):
 	content = getContent(rootUrl, gzipped, opener)
 	soup = bs.BeautifulSoup(content)
 	class x:
-		pole1 = 'Avengers 3D (dubbing)'
-		#pole1 = 'Avengers 3D - dubbing'
-		pole2 = 'Joss Whedon'
+#		pole1 = 'Avengers 3D (dubbing)'
+		pole1 = 'Avengers 3D - dubbing'
+		pole2 = ' Joss Whedon'
 		pole3 = ''
 		pole4 = ''
 		pole5 = ''

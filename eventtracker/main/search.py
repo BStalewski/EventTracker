@@ -83,7 +83,6 @@ def search(rootUrl):
 						pass
 
 			print 'Zapisuje obiekt'
-			raise RuntimeError()
 			newObject.save()
 			addedCount += 1
 			
