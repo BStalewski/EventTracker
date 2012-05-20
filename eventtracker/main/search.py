@@ -18,6 +18,8 @@ import sys
 
 import json
 
+from common import *
+
 keys = 6
 	
 #def scan_whole_internet():
@@ -60,6 +62,7 @@ def search(rootUrl):
 				continue
 			if lowUrl in visited:
 				continue
+			#print lowUrl
 			link_queue.append((lowUrl,level+1))
 			visited[lowUrl] = True
 
@@ -95,42 +98,7 @@ def objectOnSite(soup, paths):
 				return False
 	return True
 
-def getDomain(url):
-	domainEnd = url.find('/', 7) if url[:4] == 'http' else url.find('/')
-	potentialDomain = url[:domainEnd] if domainEnd != -1 else url
-	return potentialDomain if potentialDomain.count('.') > 0 else None
-
-def constructUrl(baseUrl, ahrefUrl):
-	ahrefDomain = getDomain( ahrefUrl)
-	baseDomain = getDomain( baseUrl )
-	if ahrefDomain:
-		if baseDomain != ahrefDomain:
-			raise RuntimeError("External domain")
-		return ahrefUrl
-	else:
-		return baseDomain + ahrefUrl if ahrefUrl[0] == '/' else baseUrl + ahrefUrl
-
-def checkGzipped(url, opener):
-	gzip_buf = opener.open(url)
-	buf = StringIO(gzip_buf.read())
-	html = gzip.GzipFile(fileobj=buf)
-	try:
-		html.read()
-	except:
-		return False
-	else:
-		return True
-			
-def getContent(url, gzipped, opener):
-	gzip_buf = opener.open(url)
-	buf = StringIO(gzip_buf.read())
-	if gzipped:
-		html = gzip.GzipFile(fileobj=buf)
-		return html.read()
-	else:
-		return buf.read()
-
-def findFromPathNew(soup, path):
+def findFromPath(soup, path):
 	el = soup
 	for name, i in path:
 		el = el.contents[i]
@@ -138,7 +106,6 @@ def findFromPathNew(soup, path):
 			elName = el.name
 		except:
 			elName = ''
-		print elName, i
 		if elName != name:
 			raise RuntimeError()
 

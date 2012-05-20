@@ -78,7 +78,7 @@ def objectOnSite(soup, paths):
 	for (i,path) in enumerate(paths):
 		if path != []:
 			try:
-				findFromPath(soup, path)
+				findFromPathNew(soup, path)
 			except:
 				return False
 	return True
@@ -87,8 +87,8 @@ def objectFound( obj, soup ):
 	fields = notEmptyFields( obj )
 	for field in fields:
 		print 'try:', field
-		#if len( soup.findAll(text=field) )== 0:
-		if len( soup.findAll(text=re.compile(field)) ) == 0:
+		if len( soup.findAll(text=field) )== 0:
+		#if len( soup.findAll(text=re.compile(field)) ) == 0:
 			return False
 	
 	return True
@@ -150,6 +150,14 @@ paths = [
 	[],
 	[]
 ]
+paths = [
+	[["table", 3], ["tr", 1], ["td", 1], ["table", 1], ["tr", 1], ["td", 7], ["form", 3], ["div", 5], ["p", 1], ["strong", 1], ["select", 31], ["option", 17], ["", 0]],
+	[["table", 3], ["tr", 1], ["td", 1], ["table", 1], ["tr", 1], ["td", 3], ["table", 1], ["tr", 3], ["td", 1], ["table", 17], ["tr", 3], ["td", 3], ["strong", 0], ["", 0]],
+	[],
+	[],
+	[],
+	[]
+]
 
 def showPathsValues(rootUrl):
 	gzipped = checkGzipped(rootUrl, opener)
@@ -158,10 +166,12 @@ def showPathsValues(rootUrl):
 
 	print objectOnSite(soup, paths)
 
+	'''
 	for path in paths:
 		if path != []:
 			for x in findFromPath(soup, path).contents:
 				print x
+	'''
 
 def showPole(rootUrl):
 	gzipped = checkGzipped(rootUrl, opener)
@@ -169,7 +179,7 @@ def showPole(rootUrl):
 	soup = bs.BeautifulSoup(content)
 	class x:
 		pole1 = 'Avengers 3D (dubbing)'
-		#pole1 = 'Avengers 3D - dubbing' #'Avengers 3D - dubbing'
+		#pole1 = 'Avengers 3D - dubbing'
 		pole2 = 'Joss Whedon'
 		pole3 = ''
 		pole4 = ''
@@ -177,7 +187,7 @@ def showPole(rootUrl):
 		pole6 = ''
 
 	ooo = x()
-
+	print objectFound(ooo, soup)
 	paths = findPaths(ooo, soup)
 	x1 = findFromPathNew(soup, paths[0])
 	print x1
@@ -185,4 +195,5 @@ def showPole(rootUrl):
 	x2 = findFromPathNew(soup, paths[1])
 	print x2
 
-showPole(rootUrl)
+#showPole(rootUrl)
+showPathsValues(rootUrl)

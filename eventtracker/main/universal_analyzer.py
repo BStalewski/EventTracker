@@ -3,8 +3,6 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-
-
 #nie działają polskie znaki
 #nie działa jeżeli w nazwie filmu jest obrazek "IMAX"
 from models import Obiekt, Url_json
@@ -18,6 +16,8 @@ import gzip
 import sys
 
 import json
+
+from common import *
 
 keys = 6
 
@@ -79,42 +79,6 @@ def teach(rootUrl, teach_index):
 		
 	print 'Nie nauczylem sie na urlu:', rootUrl
 
-def getDomain(url):
-	domainEnd = url.find('/', 7) if url[:4] == 'http' else url.find('/')
-	potentialDomain = url[:domainEnd] if domainEnd != -1 else url
-	return potentialDomain if potentialDomain.count('.') > 0 else None
-
-def constructUrl(baseUrl, ahrefUrl):
-	ahrefDomain = getDomain( ahrefUrl)
-	baseDomain = getDomain( baseUrl )
-	if ahrefUrl.startswith('index.php'):	#fixme - qiuck fix do cinema city
-		return baseDomain + "/"+ahrefUrl
-	if ahrefDomain:
-		if baseDomain != ahrefDomain:
-			raise RuntimeError("External domain")
-		return ahrefUrl
-	else:
-		return baseDomain + ahrefUrl if ahrefUrl[0] == '/' else baseUrl + ahrefUrl
-
-def checkGzipped(url, opener):
-	gzip_buf = opener.open(url)
-	buf = StringIO(gzip_buf.read())
-	html = gzip.GzipFile(fileobj=buf)
-	try:
-		html.read()
-	except:
-		return False
-	else:
-		return True
-			
-def getContent(url, gzipped, opener):
-	gzip_buf = opener.open(url)
-	buf = StringIO(gzip_buf.read())
-	if gzipped:
-		html = gzip.GzipFile(fileobj=buf)
-		return html.read()
-	else:
-		return buf.read()
 
 def getFromPath(soup, path):
 	el = soup.find('html')
@@ -140,8 +104,8 @@ def notEmptyFields( obj ):
 def objectFound( obj, soup ):
 	fields = notEmptyFields( obj )
 	for field in fields:
-		#if len( soup.findAll(text=field) )== 0:
-		if len( soup.findAll(text=re.compile(field)) ) == 0:
+		#if len( soup.findAll(text=re.compile(field)) ) == 0:
+		if len( soup.findAll(text=field) )== 0:
 			return False
 	
 	return True
