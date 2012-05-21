@@ -134,12 +134,13 @@ def notEmptyFields( obj ):
 	return fields
 
 keys = 6
-rootUrl = 'http://multikino.pl/pl/filmy/avengers-3d-dubbing/'
+#rootUrl = 'http://multikino.pl/pl/filmy/avengers-3d-dubbing/'
 #rootUrl = 'http://multikino.pl/pl/filmy/projekt-x/'
 #rootUrl = 'http://multikino.pl/pl/filmy/seksualni-niebezpieczni/'
 #rootUrl = 'http://multikino.pl/pl/filmy/dyktator/'
 #rootUrl = 'http://www.cinema-city.pl/index.php?module=movie&id=2723'
 #rootUrl = 'http://www.cinema-city.pl/index.php?module=movie&id=2687'
+rootUrl = 'http://www.last.fm/events'
 opener = urllib2.build_opener()
 opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
 
@@ -199,6 +200,16 @@ def showPole(rootUrl):
 	x2 = findFromPathNew(soup, paths[1])
 	print x2
 
+def testSite(rootUrl):
+	gzipped = checkGzipped(rootUrl, opener)
+	content = getContent(rootUrl, gzipped, opener)
+	print content
+	soup = bs.BeautifulSoup(content)
+	#print soup.name
+	#print len(soup.contents)
+	#print soup.find('html').find('a')
+
 #showPathsValues(rootUrl)
-showPole(rootUrl)
+#showPole(rootUrl)
+testSite(rootUrl)
 

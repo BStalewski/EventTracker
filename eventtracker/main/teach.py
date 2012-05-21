@@ -6,13 +6,11 @@ sys.setdefaultencoding('utf-8')
 #nie działają polskie znaki
 #nie działa jeżeli w nazwie filmu jest obrazek "IMAX"
 from models import Obiekt, Url_json
-from cStringIO import StringIO
 from datetime import date, datetime, timedelta
 from collections import deque
 import BeautifulSoup as bs
 import urllib2
 import re
-import gzip
 import sys
 
 import json
@@ -20,10 +18,9 @@ import json
 from common import *
 
 keys = 6
+limit = 1000
 
-#def scan_whole_internet():
 def teach(rootUrl, key1, key2=''):
-#def teach(rootUrl, teach_index):
 	opener = urllib2.build_opener()
 	opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
 	gzipped = checkGzipped(rootUrl, opener)
@@ -40,24 +37,19 @@ def teach(rootUrl, key1, key2=''):
 			content = getContent(highUrl, gzipped, opener)
 			visited[highUrl] = True
 		except RuntimeError as e:
-			#print e, ':', highUrl
 			continue
 		except:  #fixme - nie czekać na timeout - zrobic lepiej
-			#print "except -> ", highUrl
 			continue
 		
 		soup = bs.BeautifulSoup(content)
-	        print soup
-		print 'ilosc a ',len(soup.findAll('a'))
+		print highUrl
 		for link in soup.findAll('a'):
 			print link.get('href')
 			try:
 				lowUrl = constructUrl(highUrl, link.get('href'))
 			except RuntimeError as e:
-				#print e, ':', link.get('href')
 				continue
 			except:
-				#print "except -> ", highUrl
 				continue
 			if lowUrl in visited:
 				continue
@@ -78,23 +70,12 @@ def teach(rootUrl, key1, key2=''):
 
 		learn_limit = learn_limit + 1
 		print learn_limit + 1," # ",level," # ",highUrl
-		if learn_limit > 1230 or level == 3:
-			print '### NIE NAUCZYLEM SIE!!! ###:', rootUrl
+		if learn_limit > limit or level == 3:
+			print '### Nie nauczylem sie ###:', rootUrl
 			return
 		
 	print 'Nie nauczylem sie na urlu:', rootUrl
 
-def getFromPath(soup, path):
-	el = soup.find('html')
-	path_copy = path[:]
-	while path_copy[0][0] != 'html':
-		del path_copy[0]
-	del path_copy[0] # usuwamy poziom z htmlem, teraz element zerowy jest dzieckiem htmla
-	for _, i in path_copy:   # na początku jest obiekt o nazwie documents
-		el = el.contents[i]
-
-	return el
-	
 def notEmptyFields( obj ):
 	fields = []
 	for i in range(keys):
@@ -141,6 +122,5 @@ def findPaths( obj, soup ):
 			path.reverse()
 			del path[0]	#usuwamy pierwszy element [document]
 			paths.append( path )
-	#print '#### PATHS ####', paths
 	return paths
 	

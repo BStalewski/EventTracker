@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 
-from universal_analyzer import teach
+from teach import teach
 from search import search
 from forms import *
 from models import Obiekt, Url_json
@@ -12,7 +12,7 @@ from models import Obiekt, Url_json
 # url: /main/
 def main(request, url='http://multikino.pl/pl/filmy/'):
     obj = Obiekt.objects.filter(url=url)[0]
-    content = teach(url, obj.key1, obj.key2)
+    content = teach(url, obj.pole1, obj.pole2)
     return HttpResponse(content)
 
 # url: /main/multi/

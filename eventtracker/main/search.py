@@ -8,21 +8,16 @@ sys.setdefaultencoding('utf-8')
 #nie działają polskie znaki
 #nie działa jeżeli w nazwie filmu jest obrazek "IMAX"
 from models import Obiekt, Url_json
-from cStringIO import StringIO
 from collections import deque
 import BeautifulSoup as bs
 import urllib2
 import re
-import gzip
 import sys
 
 import json
 
 from common import *
 
-keys = 6
-	
-#def scan_whole_internet():
 def search(rootUrl, limit=None):
 	opener = urllib2.build_opener()
 	opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
@@ -44,29 +39,24 @@ def search(rootUrl, limit=None):
 			content = getContent(highUrl, gzipped, opener)
 			visited[highUrl] = True
 		except RuntimeError as e:
-			#print e, ':', highUrl
 			continue
 		except Exception as e:  #fixme - nie czekać na timeout - zrobic lepiej
-			#print "except -> ", highUrl
 			continue
 
+		print highUrl
 		soup = bs.BeautifulSoup(content)
 		for link in soup.findAll('a'):
 			try:
 				lowUrl = constructUrl(highUrl, link.get('href'))
 			except RuntimeError as e:
-				#print e, ':', link.get('href')
 				continue
 			except:
-				#print "except -> ", highUrl
 				continue
 			if lowUrl in visited:
 				continue
-			#print lowUrl
 			link_queue.append((lowUrl,level+1))
 			visited[lowUrl] = True
 
-		print highUrl
 		if objectOnSite(soup, paths):
 			newObject = Obiekt()
 			newObject.url = rootUrl
@@ -85,7 +75,7 @@ def search(rootUrl, limit=None):
 					except:
 						pass
 
-			print 'Zapisuje obiekt'
+			print 'Zapisu obiektu'
 			newObject.save()
 			added.append(newObjectCopy)
 			if limit is not None and len(added) >= limit:
