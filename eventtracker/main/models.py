@@ -2,8 +2,8 @@ from django.db import models
 
 # Create your models here.
 class Url_json(models.Model):
-    url   = models.CharField(max_length=100)
-    json  = models.CharField(max_length=300)
+    url   = models.CharField(max_length=500)
+    json  = models.CharField(max_length=600)
 
 class Obiekt(models.Model):
     pole1 = models.CharField(max_length=50)
@@ -12,7 +12,7 @@ class Obiekt(models.Model):
     pole4 = models.CharField(max_length=50,blank=True)
     pole5 = models.CharField(max_length=50,blank=True)
     pole6 = models.CharField(max_length=50,blank=True)
-    url   = models.CharField(max_length=100,blank=True)
+    url   = models.CharField(max_length=500,blank=True)
 
 class Person(models.Model):
     name = models.CharField(max_length=30)

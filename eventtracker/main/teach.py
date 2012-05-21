@@ -86,11 +86,16 @@ def notEmptyFields( obj ):
 		fields.append(searched)
 	return fields
 
+#regular = '[\s\/]*'
+regular = '\s*'
+
 def objectFound( obj, soup ):
 	fields = notEmptyFields( obj )
 	for field in fields:
+		regexp = regular + field + regular
 		#if len( soup.findAll(text=re.compile(field)) ) == 0:
-		if len( soup.findAll(text=field) )== 0:
+		#if len( soup.findAll(text=regular) ) == 0:
+		if len( soup.findAll(text=re.compile(regexp)) )== 0:
 			return False
 	
 	return True
@@ -104,7 +109,8 @@ def findPaths( obj, soup ):
 			paths.append( [] )
 		else:
 			#tmpEl = soup.findAll(text=re.comile(searched))[0]
-			tmpEl = soup.findAll(text=searched)[0]
+			regexp = regular + searched + regular
+			tmpEl = soup.findAll(text=re.compile(regexp))[0]
 			path = []
 			while tmpEl is not None:
 				place = 0

@@ -66,7 +66,7 @@ def search(rootUrl, limit=None):
 					continue
 				else:
 					key = 'pole' + str(i+1)
-					value = findFromPath(soup, path)
+					value = findFromPath(soup, path).strip(' \n\t/') #.strip(' \/.,/<>?;\t:-')
 					setattr(newObject, key, value)
 					newObjectCopy[ key ] = value
 					print key, ':',
