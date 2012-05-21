@@ -1,0 +1,609 @@
+a {
+	text-decoration: none;
+	color: #464847;
+}
+a:hover {
+	text-decoration: underline;
+}
+body {
+	margin: 0px;
+	padding: 0px;
+	background-color: #FFFFFF;
+	background-image: url('../img/bg_columns.gif');
+	background-repeat: repeat-x;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+form {
+	display: inline;
+}
+
+.centruj {
+	text-align: center;
+	margin: 0 auto;
+}
+.centruj table {
+	margin: 0 auto;
+}
+.centruj td {
+	text-align: left;
+}
+.lewa {
+	display: inline;
+	float: left;
+}
+.prawa {
+	display: inline;
+	float: right;
+}
+
+.error {
+	border: 2px solid #ff0000;
+	width: 80%;
+	margin: 10px auto;
+	text-align: center;
+	padding: 10px;
+}
+
+.info {
+	border: 2px solid #dddddd;
+	width: 80%;
+	margin: 10px auto;
+	text-align: center;
+	padding: 10px;
+}
+
+
+.mainColumn {
+	background-color: #FFFFFF;
+	width: 970px;
+	margin: 0 auto;
+}
+#baner_top {
+	height: 175px;
+	width: 950px;
+}
+.pasek_nadMenu {
+	width: 970px;
+	background-color: #FFFFFF;
+	height: 90px;
+	overflow:hidden;
+}
+.przyciski_pasekNadMenu {
+	float: right;
+	padding-top: 30px;
+	width: 140px;
+}
+.pasek_nadMenu .logoBox {
+    float:left;
+    width:330px;
+}
+.pasek_nadMenu .logotypy {
+    float:left;
+	padding-top: 30px;
+    width:500px;
+    text-align:center;
+}
+.menu_pasek {
+	height: 30px;
+	width: 970px;
+	background-color: #403F43;
+}
+.menu_pasek .img {
+    border: none;
+}
+
+
+
+.tresc_strony {
+	width: 970px;
+	background-color: #FFFFFF;
+}
+.kolumna_tekstowa_KONTENER {
+	width: 450px;
+}
+.kolumna_konkursy_KONTENER {
+	padding: 10px;
+	width: 620px;
+}
+.kolumna_konkursy {
+	width: 600px;
+	display: inline;
+	float: left;
+	text-align:justify;
+}
+.kolumna_tekstowa {
+	width: 450px;
+	display: inline;
+	float: left;
+	text-align:justify;
+}
+.wydarzenia_opis_sredni .kolumna_tekstowa {
+	width: 600px;
+}
+.kolumna_tekstowa_szeroki {
+
+}
+.kolumna_tekstowa img {
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+.kolumna_tekstowa_prawa {
+	width: 100px;
+	display: inline;
+	float: left;
+	padding: 50px 0 0 10px;
+	vertical-align: top;
+}
+.kolumna_tekstowa_prawa a {
+	color: #1360AD;
+}
+
+
+
+.archiwum tr {
+	background-image: url('../img/kres_poz.gif');
+	background-repeat: repeat-x;
+	background-position: bottom;
+}
+.archiwum a {
+	font-weight: bold;
+}
+.archiwum td.rok, .archiwum a.aktualnyMiesiac {
+	color: #1360AD;
+	font-weight: bold;
+}
+
+.repertuar {
+	width: 300px;
+	padding: 10px;
+}
+
+.lewaKonkursy {
+	width: 300px;
+	padding: 10px;
+}
+
+.tdRepertuar {
+	background: #e7eff7;
+	background-image: url('../img/kres_pio_repertuar.gif');
+	background-position: right top;
+	background-repeat: repeat-y;
+	width: 325px;
+}
+
+.repertuar td {
+	text-align: left;
+	padding: 5px;
+	background-image: url('../img/kres_poz_repertuar.gif');
+	background-position: left bottom;
+	background-repeat: repeat-x;
+}
+#aGodziny, #aFilmy {
+	color: #52595a;
+}
+
+.repertuar tr {
+	vertical-align: top;
+}
+.repertuar_A {
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 12px;
+	color: #1360AD;
+	padding-bottom: 10px;
+	padding-top: 5px;
+}
+.repertuar_przelaczniki {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+.repertuar_przelaczniki a {
+	color: #52595a;
+	font-weight: bold;
+}
+.repertuar table {
+	margin-top: 1px;
+	margin-bottom: 10px;
+}
+.repertuar a, .archiwum a {
+	color: #464847;
+}
+.repertuar_wyr {
+	font-weight: bold;
+	color: #1360AD;
+	padding: 5px;
+	font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+
+
+.zajawki2 {
+	float: right;
+	width: 650px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+}
+.zajawki {
+	float: right;
+	width: 450px;
+	background-image: url('../img/kres_pio.gif');
+	background-repeat: repeat-y;
+	background-position: left top;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+}
+.zajawki td, .zajawki2 td {
+	padding-top: 5px;
+	padding-right: 10px;
+	padding-bottom: 5px;
+}
+.zajawki a, .zajawki2 a {
+	color: #1061ad;
+}
+
+
+
+
+.stopka_strony {
+	margin: 0 auto;
+	height: 90px;
+	width: 970px;
+	background-color: #FFFFFF;
+	padding-top: 10px;
+	padding-bottom: 20px;
+	background-image: url('../img/kres_poz.gif');
+	background-repeat: repeat-x;
+	background-position: top;
+}
+.stopka_txt_wyr {
+	background-color: #FFFFFF;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 9px;
+	text-transform: uppercase;
+	color: #E1001F;
+	font-weight: bold;
+}
+.stopka_txt {
+	background-color: #FFFFFF;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 9px;
+}
+.stopka_lewy_tekst {
+	float: left;
+	width: 400px;
+}
+.stopka_prawa {
+	float: left;
+	width: 370px;
+	text-align: center;
+}
+.stopka_prawa_img {
+	padding-right: 5px;
+	padding-left: 5px;
+}
+.stopka_realizacja {
+    float:right;
+    width:200px;
+    text-align:right;
+    color:#7e7d82;
+    font-size:11px;
+}
+
+
+
+
+.naglowek_txt {
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 16px;
+	font-weight: bold;
+	color: #1360AD;
+	padding: 5px 5px 2px 0;
+}
+
+table.tytulFilmu .naglowek_txt {
+    height: 45px;
+    vertical-align: bottom;
+}
+.naglowek_txtBig {
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 22px;
+	font-weight: bold;
+	color: #1360AD;
+	padding-top: 5px;
+	padding-bottom: 2px;
+}
+.naglowek_txtBig_szary {
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 22px;
+	font-weight: bold;
+	color: #999999;
+	padding-top: 5px;
+	padding-bottom: 2px;
+}
+.naglowek_txtSM {
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 12px;
+	font-weight: normal;
+	color: #1360AD;
+	padding-top: 5px;
+	padding-bottom: 2px;
+}
+.teksty_glowny {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #464847;
+	padding: 5px 5px 2px 0;
+}
+.teksty_czerwony {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #FF0000;
+}
+.data_wydarzenia {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 8px;
+	color: #464847;
+}
+
+
+
+.wydarzenia_opis {
+	width: 480px;
+	padding: 10px;
+	padding-right: 0px;
+	margin-right: 10px;
+	background-image: url('../img/kres_pio.gif');
+	background-repeat: repeat-y;
+	background-position: right top;
+	overflow: hidden;
+}
+.wydarzenia_opis ul li {
+    list-style-type: disc;
+    list-style-position:inside;
+}
+.logotypy_opis {
+	width: 230px;
+	padding: 10px;
+	padding-right: 0px;
+	margin-right: 10px;
+	overflow: hidden;
+}
+.logotypy_opis div.tresc {
+    text-align:justify;
+}
+.wydarzenia_opis_szeroki {
+	width: 940px;
+	padding: 10px;
+	padding-right: 0px;
+	margin-right: 10px;
+	overflow: hidden;
+}
+.wydarzenia_opis_sredni {
+    background: url('../img/kres_pio.gif') repeat-y right top;
+	width: 640px;
+	padding: 10px;
+	padding-right: 0px;
+	margin-right: 10px;
+	overflow: hidden;
+}
+.wydarzenia_zajawki {
+	float: right;
+	width: 450px;
+	padding-top: 10px;
+}
+.wydarzenia_zajawki_sredni {
+	float: right;
+	width: 650px;
+	padding-top: 10px;
+}
+.wydarzenia_zajawki_szeroki {
+	width: 900px;
+	padding-top: 10px;
+}
+.wydarzenia_zajawki td {
+	padding-top: 5px;
+	padding-right: 10px;
+	padding-bottom: 5px;
+}
+.wydarzenia_zajawki_szeroki td {
+	padding-top: 5px;
+	padding-right: 20px;
+	padding-bottom: 5px;
+}
+.wydarzenia_zajawki a, .wydarzenia_zajawki_szeroki a {
+	color: #464847;
+}
+
+.imgWplatanie {
+	border: 0;
+	margin: 5px;
+}
+
+
+.sHighlight {
+	background: #dddddd;
+	color: #ff0000;
+	font-weight: bold;
+}
+
+
+
+
+
+
+.galerieLewa {
+	width: 220px;
+	padding: 10px;
+}
+.galeria_prawa {
+	float: right;
+	width: 680px;
+	background-image: url('../img/kres_pio.gif');
+	background-repeat: repeat-y;
+	background-position: left top;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+}
+.galleryItem {
+    float:left;
+    width:135px;
+    height:110px;
+    text-align:center;
+}
+.galeria_prawa_duze {
+	float: left;
+	width: 460px;
+	padding-top: 10px;
+}
+.galeria_prawa_miniaturki {
+	float: right;
+	width: 200px;
+	padding-top: 43px;
+}
+.galeria_lewa {
+	width: 350px;
+	padding: 10px;
+}
+.galeria_prawa_miniaturki img {
+	width: 200px;
+	padding-bottom: 10px;
+}
+.galerieLewa a.active {
+    color:#1360AD;
+}
+
+#newsletterContainer input.text {
+    height:16px;
+    margin:2px;
+    width:140px;
+    border:1px solid #A5ACB2;
+}
+#newsletterContainer input.req {
+    background:url('../img/form_req.png') no-repeat right top;
+    padding-right:8px;
+    width:132px;
+}
+
+.wydarzenia_zajawki_szeroki td.miniaturkaWydarzenie, td.miniaturkaWydarzenie {
+    width:200px;
+    height:150px;
+    text-align:center;
+    vertical-align:bottom;
+    padding:0;
+    margin:0;
+}
+.archiveTexts {
+    width:460px;
+    padding-top:20px;
+    vertical-align:top;
+
+}
+.repertuarFilmu {
+    font-weight:bold;
+    width:350px;
+    padding-top:25px;
+}
+.repertuarFilmu .data {
+    color: #1360ad;
+}
+.repertuarFilmu .godziny {
+    background:url('../img/kres_poz_repertuar.gif') repeat-x 0 bottom;
+    padding:5px 0 5px 25px;
+    margin:0 0 10px 0;
+}
+
+
+table.form {
+	margin-top: 20px;
+	width: 100%;
+}
+table.form td {
+	padding: 2px 5px;
+	text-align: left;
+	width: 35%;
+}
+table.form td.header {
+	font-weight: bold;
+	padding-top: 10px;
+	text-align: center;
+}
+table.form td.leftColumn {
+	text-align: right;
+	width: 15%;
+}
+table.form td.submit {
+	text-align: center;
+}
+table.form td.submit input {
+	padding: 2px 5px;
+}
+
+input, textarea {
+	border: 1px solid #9fa5ae;
+	margin: 5px 0 0 0;
+}
+input.text {
+	width: 200px;
+}
+
+.alert {
+	background-color: #ffffcb;
+	border: solid 1px #f1ab15;
+	color: #f1ab15;
+	margin: 0px;
+	padding: 0px;
+}
+
+
+
+#fotkiContainer {
+   padding:18px 28px;
+   margin:0;
+   width:394px;
+   height:96px;
+   background:#e7eff7;
+}
+
+#fotkiContainer .stepcarousel{
+   width: 394px; /*Width of Carousel Viewer itself*/
+   height: 115px; /*Height should enough to fit largest content's height*/
+   
+}
+
+#fotkiContainer .stepcarousel .belt{
+   position: absolute; /*leave this value alone*/
+   left: 0px;
+   top: 0px;
+   padding:0 0px;
+}
+
+#fotkiContainer .stepcarousel .panel{
+   float: left; /*leave this value alone*/
+   overflow: hidden; /*clip content that go outside dimensions of holding panel DIV*/
+   text-align:center;
+   width:128px;
+   height:122px;
+}
+
+#fotkiContainer .stepcarousel .panel img{
+   margin: 0px 5px;
+}
+
+.stepcarousel{
+   position: relative; /*leave this value alone*/
+   border: none;
+   overflow: scroll; /*leave this value alone*/
+}
+
+.znak {
+ background:url('../img/znak.png') no-repeat 50% 50%;
+ position:absolute;
+ width:128px;
+ height:96px;
+ top:0px;
+ left:5px;
+ display:none;
+}

@@ -1,0 +1,49 @@
+body, div, form, table, input, select, textarea, ul, img {
+	margin: 0px;
+	padding: 0px;
+}
+body {
+	text-align: center;
+}
+div {
+	text-align: left;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0px;
+}
+img {
+	border: none;
+}
+ul li {
+	list-style-position: outside;
+	list-style-type: none;
+}
+a {
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline !important;
+}
+div.hr {
+	clear: both;
+	font-size: 0px;
+	height: 1px;
+	line-height: 0px;
+	margin: 0px;
+	padding: 0px;
+}
+div.hr5 {
+	clear: both;
+	font-size: 0px;
+	height: 5px;
+	line-height: 0px;
+	margin: 0px;
+	padding: 0px;
+}
+p.inlineForm {
+	display: inline;
+}
+div.hidden {
+	display: none;
+}
