@@ -140,7 +140,7 @@ keys = 6
 #rootUrl = 'http://multikino.pl/pl/filmy/dyktator/'
 #rootUrl = 'http://www.cinema-city.pl/index.php?module=movie&id=2723'
 #rootUrl = 'http://www.cinema-city.pl/index.php?module=movie&id=2687'
-rootUrl = 'http://www.last.fm/events'
+rootUrl = 'http://www.empik.com/lilka-kalicinska-malgorzata,p1049473091,ksiazka-p'
 opener = urllib2.build_opener()
 opener.add_headers = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.168 Safari/535.19')]
 
@@ -160,6 +160,9 @@ paths = [
 	[],
 	[]
 ]
+paths = [[["html", 2], ["head", 1], ["title", 11], ["", 0]], [["html", 2], ["head", 1], ["title", 11], ["", 0]], [], [], [], []]
+
+
 
 def showPathsValues(rootUrl):
 	gzipped = checkGzipped(rootUrl, opener)
@@ -184,8 +187,8 @@ def showPole(rootUrl):
 	soup = bs.BeautifulSoup(content)
 	class x:
 		#pole1 = 'Avengers 3D (dubbing)'
-		pole1 = 'Avengers 3D - dubbing'
-		pole2 = 'Joss Whedon'
+		pole1 = 'Lilka'
+		pole2 = 'Zysk i S-ka Wydawnictwo'
 		pole3 = ''
 		pole4 = ''
 		pole5 = ''
@@ -210,6 +213,6 @@ def testSite(rootUrl):
 	#print soup.find('html').find('a')
 
 #showPathsValues(rootUrl)
-#showPole(rootUrl)
-testSite(rootUrl)
+showPole(rootUrl)
+#testSite(rootUrl)
 
