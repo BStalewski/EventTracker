@@ -4,27 +4,7 @@ import re
 from BeautifulSoup import BeautifulSoup as bs
 from read import readSource 
 
-des = [
-    {'key': 'Tytuł', 'value': 'Wstyd'},
-    {'key': 'Scenariusz', 'value': 'Steve McQueen'},
-    {'key': 'Scenariusz', 'value': 'Abi Morgan'},
-    {'key': 'Zdjęcia', 'value': 'Sean Bobbitt'},
-    {'key': 'Obsada', 'value': 'Wielka Brytania'},
-    {'key': 'Rok', 'value': '2011'},
-    {'key': 'Czas trwania', 'value': '101min'},
-    {'key': 'Opis', 'value': 'Brandon, 30-latek, atrakcyjny singiel z Nowego Jorku nie potrafi zapanować nad swym życiem erotycznym. Sytuacja jeszcze bardziej wymyka się spod kontroli, kiedy niespodziewanie wprowadza się do niego siostra.'}
-]
-
-des = [
-    {'key': 'Tytuł', 'value': 'Wstyd'},
-    {'key': 'Scenariusz', 'value': 'Steve McQueen'},
-    {'key': 'Scenariusz', 'value': 'Abi Morgan'},
-    {'key': 'Zdjęcia', 'value': 'Sean Bobbitt'},
-    {'key': 'Obsada', 'value': 'Wielka Brytania'},
-    {'key': 'Rok', 'value': '2011'},
-    {'key': 'Czas trwania', 'value': '101min'},
-    {'key': 'Opis', 'value': 'Brandon, 30-latek'}
-]
+from descriptions import *
 
 
 # debug purpose
@@ -34,14 +14,20 @@ def getSoup(name):
     return soup
 
 def findObject(name, descr):
+    '''Try to find object on source identified by name (url of file name) using
+    description descr. If object can be found, returns tuple containing paths
+    to object elements and html subtree with this object, otherwise returns None.'''
     content = readSource(name)
     soup = bs(content)
+
     try:
-        elementsPaths, bestPath = findPath(soup, descr)
+        elementsFullPaths, bestPath = findPath(soup, descr)
+        cutSize = len(bestPath) - 1
+        subPaths = [path[cutSize:] for path in elementsFullPaths]
     except IndexError:
         return None
 
-    return elementsPaths, soupFromPath(soup, bestPath)
+    return subPaths, soupFromPath(soup, bestPath)
 
 def soupFromPath(soup, path):
     subSoup = soup
@@ -60,21 +46,23 @@ def soupFromPath(soup, path):
     return subSoup
 
 def findPath(soup, descr):
-    initPaths = generatePaths(soup, descr[0]['value'])
+    initPaths = generatePaths(soup, descr[0]['value'], descr[0]['key'], descr[0].get('class'))
+    initPathsCopy = initPaths[:]
     elementsPaths = [[]]
     #print 'initPaths'
     #print initPaths
     for descrEl in descr[1:]:
         for i in range(len(initPaths)):
-            newPaths = generatePaths(soup, descrEl['value'])
-            #print 'newPaths', descrEl['value']
+            cls = descrEl.get('class')
+            newPaths = generatePaths(soup, descrEl['value'], descrEl['key'], cls)
+            #print 'newPaths', descrEl['key'], descrEl['value']
             #print newPaths
             nr, initPaths[i] = bestMatchPath(initPaths[i], newPaths)
             elementsPaths.append(newPaths[nr])
         #print 'initPaths'
         #print initPaths
     nr, pathsSorted = sorted(enumerate(initPaths), key=lambda p: len(p[1]))[-1]
-    elementsPaths[0] = generatePaths(soup, descr[0]['value'])[nr]
+    elementsPaths[0] = initPathsCopy[nr]
 
     return elementsPaths, pathsSorted
 
@@ -98,17 +86,38 @@ def commonPath(path1, path2):
 
     return path1[:commonInd] if commonInd > 0 else []
 
-def generatePaths(soup, text):
+def generatePaths(soup, text, addText=None, cls=None):
     paths = []
     soupElements = soup.findAll(text=re.compile(text))
+    if cls:
+        soupElements = filterWithClass(soupElements, cls)
     possiblePaths = [getPath(el) for el in soupElements]
-    return filter(lambda p: pathInteresting(p), possiblePaths)
+    possiblePaths = filter(lambda p: pathInteresting(p), possiblePaths)
+
+    if addText:
+        addElements = soup.findAll(text=re.compile(addText))
+        addPossiblePaths = [getPath(el) for el in addElements]
+        possiblePathsWithAdd = filter(lambda p: p in addPossiblePaths, possiblePaths)
+        if len(possiblePathsWithAdd) > 0:
+            possiblePaths = possiblePathsWithAdd
+
+    return possiblePaths
 
 def pathInteresting(path):
     for (name, i) in path:
         if name == 'head':
             return False
     return True
+
+def filterWithClass(elements, cls):
+    filtered = []
+    for el in elements:
+        try:
+            if el.parent['class'] == cls:
+                filtered.append(el)
+        except KeyError:
+            continue
+    return filtered
 
 def getPath(element):
     path = []
@@ -144,4 +153,5 @@ def importantElement(element, split=False):
 
 
 if __name__ == '__main__':
-    print findObject('filmy\\wstyd.htm', des)
+    print findObject('filmy\\wstyd.htm', wstydDes)
+

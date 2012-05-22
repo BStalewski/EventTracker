@@ -1,17 +1,24 @@
-from findObject import commonPath, soupFromPath
+from descriptions import *
+from findObject import commonPath, soupFromPath, findObject
 import string
 
 def prepareDescription(subSoup, des, elementsPaths):
     fullDescr = []
     merged = mergeDescrPaths(des, elementsPaths)
-    for (i, d) in merged:
+    for d in merged:
+        found, sep = checkMultiple(subSoup, d['path'])
         newDescr = {
             'key': d['key'],
             'path': d['path'],
-            'keyVisible': checkKeyVisible(subSoup, d['path'], d['key'],
+            'keyVisible': checkKeyVisible(subSoup, d['path'], d['key']),
             'long': checkLong(subSoup, d['path']),
-            'multiple': checkMultiple
+            'multiple': found
         }
+        if newDescr['multiple']:
+            newDescr['sep'] = sep
+        fullDescr.append(newDescr)
+
+    return fullDescr
 
 def mergeDescrPaths(descr, elementsPaths):
     merged = []
@@ -36,8 +43,9 @@ def checkKeyVisible(soup, path, key):
         text = subSoup.text
     except:
         text = subSoup
-
-    return text.startswith(key)
+    
+    trimmedText = text.strip()
+    return trimmedText.startswith(key)
 
 def checkLong(soup, path):
     def bigLetterWord(word):
@@ -54,7 +62,7 @@ def checkLong(soup, path):
 
     words = text.split(' ')
     bigLetterWords = filter(bigLetterWord, words)
-    return len(bigLetterWords) < len(words)
+    return len(words) > 10 and len(bigLetterWords) < 0.3 * len(words)
 
 def checkMultiple(soup, path):
     subSoup = soupFromPath(soup, path)
@@ -64,13 +72,58 @@ def checkMultiple(soup, path):
         text = subSoup
     
     words = text.split(' ')
-    if allWords(words):
-        lastLetters = getLastLetters(words)
+    if len(words) == 1:
+        return (False, None)
+
+    if allLongWords(words):
+        lastLetters = [w[-1] for w in words]
+        found, seqLetter = findSequence(lastLetters)
     else:
-        checkBeetween
+        found, seqLetter = findSequence(words)
 
-def allWords(words):
-    return all([w.isalpha() for w in words])
+    return found, seqLetter
 
-def getLastLetters(words):
-    return [w[-1] for w in words]
+def allLongWords(words):
+    return all( [(len(w) > 2) for w in words] )
+
+def findSequence(letters):
+    separators = {}
+    for (i, last) in enumerate(letters):
+        try:
+            separators[last].append(i)
+        except:
+            separators[last] = [i]
+
+    for sep in separators:
+        indexes =  separators[sep]
+        if len(indexes) == 1:
+            continue
+        diffIndexes = range(len(indexes) - 1)
+        diffs = [ (indexes[i+1] - indexes[i]) for i in diffIndexes ]
+        if max(diffs) <= min(diffs) + 2:
+            return (True, sep)
+        
+    return (False, None)
+
+
+if __name__ == '__main__':
+    '''
+    paths, subSoup = findObject('filmy\\wstyd.htm', wstydDes)
+    fullDescr = prepareDescription(subSoup, wstydDes, paths)
+    for fd in fullDescr:
+        print fd
+    '''
+    '''
+    print '-' * 80
+    paths, subSoup = findObject('filmy\\cuba_isla_of_music.htm', cubaDes)
+    fullDescr = prepareDescription(subSoup, cubaDes, paths)
+    for fd in fullDescr:
+        print fd
+    
+    '''
+    print '-' * 80
+    paths, subSoup = findObject('filmy\\ostatnia_milosc_na_ziemi.htm', ostatniaDes)
+    fullDescr = prepareDescription(subSoup, ostatniaDes, paths)
+    for fd in fullDescr:
+        print fd
+    
