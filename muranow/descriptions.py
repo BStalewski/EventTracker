@@ -33,3 +33,17 @@ ostatniaDes = [
     {'key': u'Czas trwania', 'value': u'92min'},
     {'key': u'Opis', 'value': u'Sensacja festiwalu w Sundance'},
 ]
+
+zapiskiDes = [
+    {'key': u'Tytuł', 'value': u'Zapiski z Toskanii', 'class': 'naglowek_txtBig'},
+    {'key': u'Reżyseria', 'value': u'Abbas Kiarostami'},
+    {'key': u'Scenariusz', 'value': u'Abbas Kiarostami'},
+    {'key': u'Zdjęcia', 'value': u'Luca Bigazzi'},
+    {'key': u'Obsada', 'value': u'Francja'},
+    {'key': u'Obsada', 'value': u'Iran'},
+    {'key': u'Obsada', 'value': u'Włochy'},
+    {'key': u'Rok', 'value': u'2010'},
+    {'key': u'Czas trwania', 'value': u'106min'},
+    {'key': u'Opis', 'value': u'To historia spotkania mężczyzny'},
+]
+

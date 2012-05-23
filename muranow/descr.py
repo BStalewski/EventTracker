@@ -3,7 +3,7 @@ from findObject import commonPath, soupFromPath, findObject
 import string
 
 def prepareDescription(subSoup, des, elementsPaths):
-    fullDescr = []
+    fullDescr = {}
     merged = mergeDescrPaths(des, elementsPaths)
     for d in merged:
         found, sep = checkMultiple(subSoup, d['path'])
@@ -16,7 +16,8 @@ def prepareDescription(subSoup, des, elementsPaths):
         }
         if newDescr['multiple']:
             newDescr['sep'] = sep
-        fullDescr.append(newDescr)
+        #fullDescr.append(newDescr)
+        fullDescr[d['key']] = newDescr
 
     return fullDescr
 
@@ -83,6 +84,14 @@ def checkMultiple(soup, path):
 
     return found, seqLetter
 
+def checkSplit(soup, text, path):
+    subSoup = soupFromPath(soup, path)
+    isFound = subSoup.find(text=re.compile(text))
+    if isFound:
+        return False
+    else:
+        return True
+
 def allLongWords(words):
     return all( [(len(w) > 2) for w in words] )
 
@@ -121,8 +130,16 @@ if __name__ == '__main__':
         print fd
     
     '''
+    '''
     print '-' * 80
     paths, subSoup = findObject('filmy\\ostatnia_milosc_na_ziemi.htm', ostatniaDes)
+    fullDescr = prepareDescription(subSoup, ostatniaDes, paths)
+    for fd in fullDescr:
+        print fd
+    '''
+
+    print '-' * 80
+    paths, subSoup = findObject('filmy\\ostatnia_milosc_na_ziemi_strong.htm', ostatniaDes)
     fullDescr = prepareDescription(subSoup, ostatniaDes, paths)
     for fd in fullDescr:
         print fd

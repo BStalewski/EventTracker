@@ -57,14 +57,22 @@ def findPath(soup, descr):
             newPaths = generatePaths(soup, descrEl['value'], descrEl['key'], cls)
             #print 'newPaths', descrEl['key'], descrEl['value']
             #print newPaths
-            nr, initPaths[i] = bestMatchPath(initPaths[i], newPaths)
-            elementsPaths.append(newPaths[nr])
+            try:
+                nr, tmpPaths = bestMatchPath(initPaths[i], newPaths)
+            except:
+                elementsPaths.append(None)
+            else:
+                nr, initPaths[i] = bestMatchPath(initPaths[i], newPaths)
+                elementsPaths.append(newPaths[nr])
         #print 'initPaths'
         #print initPaths
-    nr, pathsSorted = sorted(enumerate(initPaths), key=lambda p: len(p[1]))[-1]
-    elementsPaths[0] = initPathsCopy[nr]
+    if initPaths == []:
+        return [], None
 
-    return elementsPaths, pathsSorted
+    bestNr, bestPath = sorted(enumerate(initPaths), key=lambda p: len(p[1]))[-1]
+    elementsPaths[0] = initPathsCopy[bestNr]
+
+    return elementsPaths, bestPath
 
 def bestMatchPath(path, newPaths):
     mergedPaths = []
@@ -88,9 +96,12 @@ def commonPath(path1, path2):
 
 def generatePaths(soup, text, addText=None, cls=None):
     paths = []
+    print text
+    print repr(text)
     soupElements = soup.findAll(text=re.compile(text))
     if cls:
         soupElements = filterWithClass(soupElements, cls)
+
     possiblePaths = [getPath(el) for el in soupElements]
     possiblePaths = filter(lambda p: pathInteresting(p), possiblePaths)
 
@@ -100,6 +111,10 @@ def generatePaths(soup, text, addText=None, cls=None):
         possiblePathsWithAdd = filter(lambda p: p in addPossiblePaths, possiblePaths)
         if len(possiblePathsWithAdd) > 0:
             possiblePaths = possiblePathsWithAdd
+
+    if possiblePaths == [] and len(text.split()) > 1:
+        print 'pp', text
+        possiblePaths = getSplitTextPath(soup, text)
 
     return possiblePaths
 
@@ -118,6 +133,51 @@ def filterWithClass(elements, cls):
         except KeyError:
             continue
     return filtered
+
+def getSplitTextPath(soup, text):
+    # key jest taki, zeby nie byl znaleziony na stronie,
+    splitText = []
+    for (i, t) in enumerate(text.split()):
+        splitText.append({
+            'value': t,
+            'key': '%d__' % i
+        })
+
+    splitText = [{'value': t, 'key': ''} for t in text.split()]
+    wordsFullPaths, bestPath = findPath(soup, splitText)
+    print 'wFP:', wordsFullPaths
+    print 'bP:', bestPath
+
+    cutEnd = len(bestPath)
+    splitStart = wordsFullPaths[0][cutEnd][1]
+    splitEnd = wordsFullPaths[0][cutEnd][1]
+    for path in wordsFullPaths:
+        ind = path[cutEnd][1]
+        splitStart = min(splitStart, ind)
+        splitEnd = max(splitEnd, ind)
+
+    subtreeTextPaths = [bestPath + [('', i)] for i in range(splitStart, splitEnd+1)] 
+    subtreeElements = [soupFromPath(soup, path) for path in subtreeTextPaths]
+    subtreeTextSplit = [subtreeContent(element) for element in subtreeElements]
+    subtreeText = ' '.join([])
+    subtreeWords = subtreeText.split()
+    for (i, w) in enumerate(subtreeWords):
+        if w != splitText[i]:
+            print 'Rozne w i =', i
+            return []
+
+    return [bestPath]
+
+def subtreeContent(element):
+    try:
+        subtreeText = element.text
+    except:
+        subtreeText = element
+    else:
+        for child in element.contents:
+            subtreeText += subtreeContent(child)
+
+    return subtreeText
 
 def getPath(element):
     path = []
