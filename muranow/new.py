@@ -293,11 +293,6 @@ def test(sites, keywords):
             newKeywords += foundKeywords
             foundKeywords = fillDescription(filmDescriptions[filmName], plainText, keywords + newKeywords)
 
-    print 'New keywords:'
-    for k in newKeywords:
-        print k,
-    print ''
-
     return filmDescriptions
 
 def fillDescription(description, plainText, keywordsInfo):
@@ -408,6 +403,7 @@ if __name__ == '__main__':
     labels = learnResults.values()
     testResults = test(testSites, labels)
     for filmName, names in testResults.iteritems():
+        print '-' * 80
         print 'Film:', filmName
         for name, values in names.iteritems():
             if values != []:
