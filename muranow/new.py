@@ -159,11 +159,6 @@ def testLearning():
          'nietykalni.htm',
          'milosc.htm',
          'bestia.htm',
-         #'http://muranow.gutekfilm.pl/film.php?category=2800&id=c0c4cdb61205efa&page=1&type=current', # Jiro
-         #'http://muranow.gutekfilm.pl/film.php?category=2800&id=f0a033a89d37695&page=1&type=current', # kropka
-         #'http://muranow.gutekfilm.pl/film.php?category=2800&id=3c5cd7ea56a5b61&page=1&type=current', # Nietykalni
-         #'http://muranow.gutekfilm.pl/film.php?category=2800&id=e42818047d0de21&page=1&type=current', # Milosc jezyk
-         #'http://muranow.gutekfilm.pl/film.php?category=2800&id=14e5854da575ece&page=1&type=current', # Bestia z
     ]
     sitesPaths = [os.path.join('nowe_filmy', 'learn', site) for site in sites]
     searchedNames = {
@@ -223,7 +218,7 @@ def testLearning():
     return learnResults
 
 def learn(sites, searchedNames):
-    print 'Przeprowadzenie uczenia na stronach:'
+    print 'Learning on sites:'
     for site in sites:
         print site,
     print ''
@@ -231,17 +226,17 @@ def learn(sites, searchedNames):
     precedingNames = {}
 
     for nameType, names in searchedNames.iteritems():
-        print 'Szukanie dla klasy:', nameType
-        print 'Z wartosci:,'
+        print 'Searching for values in class:', nameType
+        print 'from values:,'
         for name in names:
             print name,
         print ''
         
         proposedName = findPredecessor(sites, names)
         if proposedName is None:
-            print 'Nie mozna bylo wybrac zadnej nazwy.'
+            print 'Unable to choose any name.'
         else:
-            print 'Nazwa to:', proposedName
+            print 'Chosen name is:', proposedName
             precedingNames[nameType] = {
                 'name': proposedName,
                 'start': findCommonStart(names),
@@ -292,16 +287,7 @@ def test(sites, keywords):
         print 'search site:', sites[i]
         filmName = sites[i][:-4]  # cut off .htm
         filmDescriptions[filmName] = {}
-        '''
-        newKeywords = []
-        for keyword in keywords:
-            nameIndexes = findIndexes(plainText, keyword)
-            for index in nameIndexes:
-                partialText = omitKeyword(plainText, index, keyword)
-                names, foundKeywords = getNames(partialText, 3, keywords)
-                filmDescriptions[filmName][keyword] = names
-            newKeywords.append(foundKeywords)
-        '''
+
         foundKeywords = fillDescription(filmDescriptions[filmName], plainText, keywords + newKeywords)
         while foundKeywords != []:
             newKeywords += foundKeywords
