@@ -2,6 +2,7 @@
 
 from read import readSource
 import re
+import os
 
 def findPredecessor(sources, names):
     siteTexts = [readSource(source) for source in sources] 
@@ -151,75 +152,283 @@ def cleanName(name):
     cleanedName = name.strip().strip(',.:')
     return cleanedName
 
-
-if __name__ == '__main__':
+def testLearning():
     sites = [
-         'nowe_filmy\\jiro.htm',
-         'nowe_filmy\\kropka.htm',
-         'nowe_filmy\\nietykalni.htm',
-         'nowe_filmy\\milosc.htm',
-         'nowe_filmy\\bestia.htm',
+         'jiro.htm',
+         'kropka.htm',
+         'nietykalni.htm',
+         'milosc.htm',
+         'bestia.htm',
          #'http://muranow.gutekfilm.pl/film.php?category=2800&id=c0c4cdb61205efa&page=1&type=current', # Jiro
          #'http://muranow.gutekfilm.pl/film.php?category=2800&id=f0a033a89d37695&page=1&type=current', # kropka
          #'http://muranow.gutekfilm.pl/film.php?category=2800&id=3c5cd7ea56a5b61&page=1&type=current', # Nietykalni
          #'http://muranow.gutekfilm.pl/film.php?category=2800&id=e42818047d0de21&page=1&type=current', # Milosc jezyk
          #'http://muranow.gutekfilm.pl/film.php?category=2800&id=14e5854da575ece&page=1&type=current', # Bestia z
     ]
-    directors = [
-        'David Gelb',
-        'Dervis Zaim',
-        'Olivier Nakache',
-        'Eric Toledano',
-        'lksen Basarır',
-        'Coleman Francis',
-    ]
-    photographers = [
-        'David Gelb',
-        'Ercan Yılmaz',
-        'Mathieu Vadepied',
-        'Hayk Kirakosyan',
-    ]
-    screenwriters = [
-        'Dervis Zaim',
-        'Eric Toledano',
-        'Olivier Nakache',
-        'Mert Fırat',
-        'lksen Basarır',
-    ]
-    countries = [
-        'Japonia',
-        'Turcja',
-        'Turcja',
-        'USA',
-    ]
-    times = [
-        '81min',
-        '85min',
-        '112min',
-        '98min',
-        '53min',
-    ]
-    years = [
-        '2011',
-        '2008',
-        '2011',
-        '2009',
-        '1961',
-    ]
+    sitesPaths = [os.path.join('nowe_filmy', 'learn', site) for site in sites]
+    searchedNames = {
+        'directors': [
+            'David Gelb',
+            'Dervis Zaim',
+            'Olivier Nakache',
+            'Eric Toledano',
+            'lksen Basarır',
+            'Coleman Francis',
+        ],
+        'photographers': [
+            'David Gelb',
+            'Ercan Yılmaz',
+            'Mathieu Vadepied',
+            'Hayk Kirakosyan',
+        ],
+        'screenwriters': [
+            'Dervis Zaim',
+            'Eric Toledano',
+            'Olivier Nakache',
+            'Mert Fırat',
+            'lksen Basarır',
+        ],
+        'countries': [
+            'Japonia',
+            'Turcja',
+            'Turcja',
+            'USA',
+        ],
+        'times': [
+            '81min',
+            '85min',
+            '112min',
+            '98min',
+            '53min',
+        ],
+        'years': [
+            '2011',
+            '2008',
+            '2011',
+            '2009',
+            '1961',
+        ]
+    }
 
-director = findPredecessor(sites, directors)
-photograph = findPredecessor(sites, photographers)
-screenwriter = findPredecessor(sites, screenwriters)
-country = findPredecessor(sites, countries)
-time = findPredecessor(sites, times)
-year = findPredecessor(sites, years)
+    learnResults = learn(sitesPaths, searchedNames)
+    print '*' * 80
 
+    print 'Best director:', learnResults['directors']
+    print 'Best photograph:', learnResults['photographers']
+    print 'Best screenwriter:', learnResults['screenwriters']
+    print 'Best country:', learnResults['countries']
+    print 'Best time:', learnResults['times']
+    print 'Best year:', learnResults['years']
 
-print 'Best director:', director
-print 'Best photograph:', photograph
-print 'Best screenwriter:', screenwriter
-print 'Best country:', country
-print 'Best time:', time
-print 'Best year:', year
+    return learnResults
 
+def learn(sites, searchedNames):
+    print 'Przeprowadzenie uczenia na stronach:'
+    for site in sites:
+        print site,
+    print ''
+
+    precedingNames = {}
+
+    for nameType, names in searchedNames.iteritems():
+        print 'Szukanie dla klasy:', nameType
+        print 'Z wartosci:,'
+        for name in names:
+            print name,
+        print ''
+        
+        proposedName = findPredecessor(sites, names)
+        if proposedName is None:
+            print 'Nie mozna bylo wybrac zadnej nazwy.'
+        else:
+            print 'Nazwa to:', proposedName
+            precedingNames[nameType] = {
+                'name': proposedName,
+                'start': findCommonStart(names),
+                'end': findCommonEnd(names)
+            }
+
+    return precedingNames
+
+def findCommonStart(words, reverse=False):
+    if len(words) < 4:
+        return None
+
+    for word in words:
+        if len(word) < 2:
+            return None
+
+    commonText = ''
+    try:
+        for (i, w) in enumerate(words):
+            ind = i if not reverse else (-i)
+            letters = [w[ind] for w in words]
+            if max(letters) == min(letters):
+                commonText = commonText + letters[0] if not reverse else letters[0] + commonText
+    except IndexError:
+        pass
+
+    return commonText if len(commonText) > 1 else None
+
+def findCommonEnd(words):
+    return findCommonStart(words, reverse=True)
+
+        
+def test(sites, keywords):
+    sitesPaths = [os.path.join('nowe_filmy', 'test', site) for site in sites]
+
+    siteTexts = [readSource(site) for site in sitesPaths] 
+
+    print '*' * 80
+    print 'TEST'
+    
+    filmDescriptions = {}
+    newKeywords = []
+
+    for (i, text) in enumerate(siteTexts):
+        nohtmlText = re.sub('<[^<>]*>', ' ', text)
+        plainText = re.sub('\s+', ' ', nohtmlText)
+
+        print 'search site:', sites[i]
+        filmName = sites[i][:-4]  # cut off .htm
+        filmDescriptions[filmName] = {}
+        '''
+        newKeywords = []
+        for keyword in keywords:
+            nameIndexes = findIndexes(plainText, keyword)
+            for index in nameIndexes:
+                partialText = omitKeyword(plainText, index, keyword)
+                names, foundKeywords = getNames(partialText, 3, keywords)
+                filmDescriptions[filmName][keyword] = names
+            newKeywords.append(foundKeywords)
+        '''
+        foundKeywords = fillDescription(filmDescriptions[filmName], plainText, keywords + newKeywords)
+        while foundKeywords != []:
+            newKeywords += foundKeywords
+            foundKeywords = fillDescription(filmDescriptions[filmName], plainText, keywords + newKeywords)
+
+    print 'New keywords:'
+    for k in newKeywords:
+        print k,
+    print ''
+
+    return filmDescriptions
+
+def fillDescription(description, plainText, keywordsInfo):
+    newKeywordsInfo = []
+    for keyword in keywordsInfo:
+        nameIndexes = findIndexes(plainText, keyword['name'])
+        for index in nameIndexes:
+            partialText = omitKeyword(plainText, index, keyword['name'])
+            names, foundKeywords = getNames(partialText, 3, keywordsInfo, keyword)
+            description[keyword['name']] = names
+            if foundKeywords != []:
+                print '1', newKeywordsInfo
+                newKeywordsInfo += foundKeywords
+                print '2', newKeywordsInfo
+
+    return newKeywordsInfo
+
+def omitKeyword(text, cutStartIndex, keyword):
+    cutIndex = cutStartIndex + len(keyword)
+    while text[cutIndex] in [':', ' ']:
+        cutIndex += 1
+
+    return text[cutIndex:]
+
+def getNames(text, maxCheck, keywords, keyword):
+    words = text.split(' ')
+    checksRemaining = maxCheck
+
+    start = keyword['start']
+    end = keyword['end']
+
+    isNumberType = checkNumberType(words[0])
+    names = []
+    startNameIndex = 0
+    endNameIndex = 0
+    newKeywords = []
+    keywordNames = [k['name'] for k in keywords]
+    while checksRemaining > 0:
+        if isNumberType != checkNumberType(words[endNameIndex]):
+            newName = makeName( words[startNameIndex:endNameIndex] )
+            if newName not in names:
+                names.append(newName)
+            break
+
+        if checkPoles(words[startNameIndex:endNameIndex + 1], start, end):
+            newName = makeName( words[startNameIndex:endNameIndex + 1] )
+            names.append(newName)
+            checksRemaining = maxCheck
+        elif words[endNameIndex][-1] == ',':
+            newName = makeName( words[startNameIndex:endNameIndex + 1] )
+            newName = newName[:-1] #  cut off ','
+            names.append(newName)
+            startNameIndex = endNameIndex + 1
+            checksRemaining = maxCheck
+        elif words[endNameIndex][-1] == ':':
+            if makeName( words[endNameIndex: endNameIndex + 1] ) in keywordNames:
+                if startNameIndex != endNameIndex - 1:
+                    newName = makeName( words[startNameIndex: endNameIndex] )
+                    names.append(newName)
+            elif makeName( words[endNameIndex - 1: endNameIndex + 1] ) in keywordNames:
+                if startNameIndex != endNameIndex - 2:
+                    newName = makeName( words[startNameIndex: endNameIndex - 1] )
+                    names.append(newName)
+            else:
+                newName = makeName( words[startNameIndex: endNameIndex] )
+                names.append(newName)
+                newKey = words[endNameIndex][:-1]
+                print 'new key:', newKey
+                newKeyDescr = {
+                    'name': newKey,
+                    'start': None,
+                    'end': None
+                }
+                newKeywords.append(newKeyDescr)
+            break
+
+        endNameIndex += 1
+        checksRemaining -= 1
+
+    return names, newKeywords
+
+def makeName(words):
+    name = ' '.join(words)
+    return name[:-1] if name[-1] in [',', ':'] else name
+
+def checkNumberType(word):
+    try:
+        int(word)
+        return True
+    except:
+        return False
+
+def checkPoles(words, start, end):
+    if start is None and end is None:
+        return False
+
+    correct = True
+    text = makeName(words)
+    if start is not None:
+        correct = text.startswith(start)
+    if end is not None:
+        correct = correct and text.endswith(end)
+
+    return correct
+
+if __name__ == '__main__':
+    learnResults = testLearning()
+    testSites = ['wichrowe.htm', 'ojczyzna.htm', 'zazdrosc.htm']
+    
+    labels = learnResults.values()
+    testResults = test(testSites, labels)
+    for filmName, names in testResults.iteritems():
+        print 'Film:', filmName
+        for name, values in names.iteritems():
+            if values != []:
+                print name, ':',
+                for value in values:
+                    print value,
+                print ''
 
