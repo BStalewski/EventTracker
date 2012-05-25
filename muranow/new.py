@@ -196,13 +196,6 @@ def testLearning():
             '98min',
             '53min',
         ],
-        'years': [
-            '2011',
-            '2008',
-            '2011',
-            '2009',
-            '1961',
-        ]
     }
 
     learnResults = learn(sitesPaths, searchedNames)
@@ -213,7 +206,6 @@ def testLearning():
     print 'Best screenwriter:', learnResults['screenwriters']
     print 'Best country:', learnResults['countries']
     print 'Best time:', learnResults['times']
-    print 'Best year:', learnResults['years']
 
     return learnResults
 
