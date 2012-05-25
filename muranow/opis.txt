@@ -1,0 +1,93 @@
+I Uczenie
+Jest zbiór stron z hasłami z dziedzin, które chcemy wyszukiwać na innych stronach, np. reżyser, czas trwania.
+funkcja learn - dostaje nazwy stron i hasła z dziedzin do wyszukiwania (linia 225)
+
+1. Dla każdej haseł z każdej dziedziny szuka nazwy charakterystycznej, występującej przed tymi hasłami:
+np. "Reżyser" (funkcja findPredecessor).
+2. W funkcji findPredecessor - szukamy nazw występujących przed hasłami z jednej dziedziny na stronach ze zbioru uczącego:
+- html zamieniany na tekst: usuwane znaczniki, ciągi białych znaków zastępowane spacją.
+- dla każdego hasła z danej dziedziny znajdowane są na stronach trzy ostatnie wyrazy i tworzony jest
+unigram(ostatnie), bigram(przedostatni i ostatni) i trigram(trzy ostatnie słowa) (funkcja findThreeLastWords).
+Tworzony jest słownik przechowujący ilość wystąpień ngramów. Jeśli w jednym z tych trzech słów był na końcu przecinek, oznacza to,
+że badany ciąg wyrazów jest jednym z haseł i wtedy cofamy się o odpowiednią ilość wyrazów do tyłu(do wyrazu za przecinek).
+3. Po wyznaczeniu ngramów i liczby ich wystąpień na wszystkich stronach, następuje próba odgadnięcia nazwy występującej
+przed hasłami. Porównywane są częstości wystąpienia ngramów(funkcja chooseBestName), jeśli było za mało wystąpień, to
+żadna nazwa nie jest wybierana. W przeciwnym przypadku określa to if w liniach 109-117(wybieramy unigram jeśli jest bardzo
+często, ale jeśli często jest bigram to bigram, ale jeśli dość często jest trigram, to trigram).
+4. Czyścimy nazwę z dziwnych znaków (jest przecinek i dwukropek, ale chyba to wystarczy) i zapisujemu ją.
+5. Znajdujemy wspólne początki lub końce haseł z danej dziedziny szukając ich części wspólnej, np.
+("min" w "101min", "102min", "90min"). Jeśli jest za mało danych lub wspólna część jest za krótka(krótsza niż 2),
+to mówimy, że nie ma.
+
+Dane zwracane przez learn mają postać:
+{
+	"początkowy typ nazwy(np. director - definiowane przez użytkownika, słuzy tylko do wypisywania)":
+		{
+			"name": <znaleziona nazwa>,
+			"start": <wspólny początek> LUB None
+			"end": <wspólny koniec> LUB None
+		}
+	... // i tak dalej dla każdego hasła
+}
+
+II Testowanie
+Na wejściu mamy strony oraz listę wartości ze słownika zwracanego przez learn, czyli:
+[
+	{
+		"name": <znaleziona nazwa>,
+		"start": <wspólny początek> LUB None
+		"end": <wspólny koniec> LUB None
+	},
+	... // i tak dalej dla każdego hasła
+]
+funkcja test - linia 277
+(Jest zakomentowany kod, ale jeśli Koperwas nie będzie chciał zobaczyć, to nie ma po co czyścić, więc na zapas nie chce mi się:)
+1. Dla każdej strony czyścimy html tak jak poprzednio.
+2. Hasła wyszukiwane są na stronie w funkcji fillDescription, która uzupełnia opis filmu, a zwraca nowe nazwy do wyszukiwania,
+czyli np. "Obsada", ale w postaci takiej jak poprzednio, czyli:
+[
+	{
+		"name": ...,
+		"start": ...,
+		"end": ...
+	},
+	...
+]
+3. Wyszukiwanie:
+- znalezienie miejsca z nazwą (findIndexes)
+- usunięcie z tekstu fragmentu przed nazwą i jej samej
+- znalezienie haseł związnych z tą nazwą w funkcji getNames (linia 339).
+	Wiem, ta funkcja to jest jakiś potwór. Najpierw rozbijam tekst strony, na którym wyszukuję, na słowa. Potem jest taki
+	while, którego zadaniem jest wyłapaniem wszystkich haseł z tej dziedziny. Najpierw sprawdzam, czy typ aktualnego wyrazu
+	jest inny niż typ pierwszego wyrazu(jeśli tak, to trafiłem na coś innego, mogę zapisać to, co było do tej pory i
+	zakończyć),
+	jeśli nie to sprawdzam, czy początek i koniec pasuje do tych spotykanych na dotychczasowych stronach, jeśli tak, to
+	dodaję wyraz(lub wyrazy) i sprawdzam kolejny,
+	jeśli nie to sprawdzam, czy ostatni wyraz kończy się dwukropkiem, jeśli tak to:
+		oznacza to, że trafiłem na opis jakiejś cechy filmu(np. reżyser:), muszę zatem cofnąć się o jeden lub dwa wyrazy,
+		(bo sprawdzam tylko trzy, więc o więcej nie ma sensu), i sprawdzić, czy dana zbitka wyrazów jest nazwą. Najpierw
+		sprawdzam ostatni wyraz(bez dwukropku), jeśli jest nazwą, to biorę to, co było przed nim i to jest szukanym hasłem,
+		jeśli nie, to sprawdzam przedostatni i ostatni, jeśli to jest hasłem, to zapisuję, to co było przed przedostatnim,
+		a jeśli znowu nie, to oznacza to, że to, co znalazłem jest nową nazwą.
+		Wtedy dodaję jej opis, czyli {name, start, end} do listy znalezionych nazw.
+		Kończę pętlę.
+	jeśli nie, to znaczy że jestem w środku jakiegoś hasła (np. między imieniem a nazwiskiem)
+	Funkcja ta zwraca znalezione hasła dla danej nazwy oraz listę nowych nazw.
+- Jeśli nowa nazwa została znaleziona, to jest ona dodawana do aktualnych nazw i funkcja getNames pobiera dane również
+jej dotyczące. Jeśli znowy coś nowe nazwy są znalezione, to funkcja jest powtarzana, itd. (linie 306-308)
+- funkcja test zwraca opisy filmów w postaci:
+{
+	"nazwa strony internetowej/nazwa filmu": {
+		"nazwa (np. reżyser): [
+			reżyser1,
+			reżyser2,
+			...
+		]
+	}
+}
+
+Co jest nie halo:
+- uczenie trochę uproszczone: bo jak znajduję nowe hasło, to nie sprawdzam jego początku i końca(co prawda mogę mieć mało danych,
+bo tylko jedną stronę). Nie sprawdzam również, czy nie występowało wcześniej, na poprzednich stronach.
+- Opis nie jest uaktualniany, ale to pikuś, wystarczy zwracać w teście nowy opis wyszukiwanych pól.
+- może coś jeszcze, ale nie pamiętam.
