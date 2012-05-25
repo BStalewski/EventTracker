@@ -309,9 +309,7 @@ def fillDescription(description, plainText, keywordsInfo):
             names, foundKeywords = getNames(partialText, 3, keywordsInfo, keyword)
             description[keyword['name']] = names
             if foundKeywords != []:
-                print '1', newKeywordsInfo
                 newKeywordsInfo += foundKeywords
-                print '2', newKeywordsInfo
 
     return newKeywordsInfo
 
